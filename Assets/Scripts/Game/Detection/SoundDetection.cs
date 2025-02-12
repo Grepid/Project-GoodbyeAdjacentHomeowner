@@ -13,6 +13,7 @@ public class SoundDetection : MonoBehaviour
     public float AmbienceLevel { get; private set; }
     private float ambienceMultiplier = 1;
     public float TotalSoundLevel => SoundLevel + PermanentSoundLevel;
+    public float unSusPercentPerSecond;
 
     private float startingWidth;
 
@@ -25,7 +26,46 @@ public class SoundDetection : MonoBehaviour
 
     private void Update()
     {
-        
+        SoundLevel = Mathf.Clamp(SoundLevel, 0, 1 - PermanentSoundLevel);
+        UnSus();
+
+        //Debug
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            AddSoundLevelPercent(10);
+        }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            AddPermanentSoundLevelPercent(10);
+        }
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            AddPermanentSoundLevelPercent(-10);
+        }
+
+
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            SetAmbienceLevel(1);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            SetAmbienceLevel(2);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            SetAmbienceLevel(3);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            SetAmbienceLevel(0);
+        }
+    }
+
+    private void UnSus()
+    {
+        SoundLevel = Mathf.Clamp(SoundLevel - ((unSusPercentPerSecond/100) * Time.deltaTime), 0, 1);
+        UpdateSoundBar();
     }
 
     public void SetAmbienceLevel(int level)
@@ -50,9 +90,15 @@ public class SoundDetection : MonoBehaviour
         }
     }
 
-    private void AddSoundLevel(float level)
+    private void AddSoundLevelPercent(float level)
     {
-        SoundLevel += level * ambienceMultiplier;
+        SoundLevel = Mathf.Clamp(SoundLevel + ((level / 100) * ambienceMultiplier), 0, 1-PermanentSoundLevel);
+        UpdateSoundBar();
+    }
+
+    private void AddPermanentSoundLevelPercent(float level)
+    {
+        PermanentSoundLevel = Mathf.Clamp(PermanentSoundLevel + (level / 100), 0, 1);
         UpdateSoundBar();
     }
 

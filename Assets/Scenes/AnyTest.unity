@@ -792,6 +792,10 @@ PrefabInstance:
       propertyPath: permanentSoundLevel
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8103302277590722871, guid: e7b25655a79d0f247a6af57e79897238, type: 3}
+      propertyPath: unSusPercentPerSecond
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
