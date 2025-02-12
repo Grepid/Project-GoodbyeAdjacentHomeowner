@@ -169,16 +169,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cc: {fileID: 455289487264331458}
   camArm: {fileID: 604464240333727441}
-  moveSpeed: 50
-  mouseSens: 100
-  velocity: {x: 0, y: 0, z: 0}
-  lookXY: {x: 0, y: 0}
-  SprintMultiplier: 1
+  moveSpeed: 5
+  mouseSens: {x: 100, y: 100}
+  crouchHeight: 1
   PlayerGravity: 9
-  JumpStrength: 10
+  JumpStrength: 3
   ExtraJumpStrength: 1.5
   AllowedJumps: 1
-  disallowSprinting: 0
+  canSprint: 1
 --- !u!114 &4438727056320394805
 MonoBehaviour:
   m_ObjectHideFlags: 0

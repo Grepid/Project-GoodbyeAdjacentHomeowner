@@ -14,6 +14,8 @@ public class SoundDetection : MonoBehaviour
     private float ambienceMultiplier = 1;
     public float TotalSoundLevel => SoundLevel + PermanentSoundLevel;
     public float unSusPercentPerSecond;
+    [SerializeField]
+    private float permanentAddThresholdPercent,permanentPercentPerSecondInZone;
 
     private float startingWidth;
 
@@ -27,7 +29,13 @@ public class SoundDetection : MonoBehaviour
     private void Update()
     {
         SoundLevel = Mathf.Clamp(SoundLevel, 0, 1 - PermanentSoundLevel);
-        UnSus();
+        if (TotalSoundLevel > (permanentAddThresholdPercent / 100))
+        {
+            AddPermanentSoundLevelPercent(permanentPercentPerSecondInZone * Time.deltaTime);
+            AddSoundLevelPercent(-permanentPercentPerSecondInZone * Time.deltaTime);
+        }
+        AddSoundLevelPercent(-unSusPercentPerSecond * Time.deltaTime);
+        //UnSus();
 
         //Debug
         if (Input.GetKeyDown(KeyCode.X))

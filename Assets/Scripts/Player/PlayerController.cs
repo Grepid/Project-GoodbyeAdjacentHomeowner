@@ -28,6 +28,9 @@ public class PlayerController : MonoBehaviour
     private Vector3 movementDirection;
     private Vector2 lookXY;
 
+    [SerializeField]
+    private float crouchHeight;
+    private float standHeight;
 
     public float SprintMultiplier { get; private set; }
     public void SetSprintMultiplier(float newMultiplier)
@@ -48,7 +51,7 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         Player.SetController(this);
-
+        standHeight = cc.height;
         currentJumps = AllowedJumps;
     }
 
@@ -211,7 +214,7 @@ public class PlayerController : MonoBehaviour
         while (true)
         {
             Vector3 footPos = cc.bounds.center - Vector3.up * cc.bounds.extents.y;
-            var hits = Physics.RaycastAll(footPos, Vector3.up, 1.8f);
+            var hits = Physics.RaycastAll(footPos, Vector3.up, standHeight);
             var nonPlayer = Array.Find(hits, h => h.collider.gameObject != gameObject);
             if (nonPlayer.collider != null)
             {
@@ -219,13 +222,13 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                cc.height = 1.8f;
+                cc.height = standHeight;
                 break;
             }
             yield return null;
         }
     }
-
+    
 
     private void Crouch(bool value)
     {
@@ -236,7 +239,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            cc.height = 1f;
+            cc.height = crouchHeight;
         }
     }
 
