@@ -18,9 +18,10 @@ public class SoundDetection : MonoBehaviour
     public float TotalSoundLevel => SoundLevel + PermanentSoundLevel;
     public float unSusPercentPerSecond;
     [SerializeField]
-    private float permanentAddThresholdPercent,permanentPercentPerSecondInZone;
+    private float detectionPerecent,permanentPercentPerSecondInZone;
 
-    public bool IsTaggedAndCursed => PermanentSoundLevel >= (permanentAddThresholdPercent / 100);
+    public bool IsTaggedAndCursed => PermanentSoundLevel >= (detectionPerecent / 100);
+    public bool IsDetected => TotalSoundLevel >= (detectionPerecent/100);
 
     private float startingWidth;
 
@@ -35,15 +36,15 @@ public class SoundDetection : MonoBehaviour
     private void Update()
     {
         SoundLevel = Mathf.Clamp(SoundLevel, 0, 1 - PermanentSoundLevel);
-        if (TotalSoundLevel > (permanentAddThresholdPercent / 100) && SoundLevel > 0)
+        if (TotalSoundLevel > (detectionPerecent / 100) && SoundLevel > 0)
         {
             AddPermanentSoundLevelPercent(permanentPercentPerSecondInZone * Time.deltaTime);
-            AddSoundLevelPercent(-permanentPercentPerSecondInZone * Time.deltaTime);
+            //AddSoundLevelPercent(-permanentPercentPerSecondInZone * Time.deltaTime);
         }
         AddSoundLevelPercent(-unSusPercentPerSecond * Time.deltaTime);
 
-        //Debug
-        if (Input.GetKeyDown(KeyCode.X))
+        //Debug binds
+        if (Input.GetKeyDown(KeyCode.Z))
         {
             AddSoundLevelPercent(10);
         }
@@ -103,9 +104,10 @@ public class SoundDetection : MonoBehaviour
         UpdateSoundBar();
     }
 
-    private void AddPermanentSoundLevelPercent(float level)
+    public void AddPermanentSoundLevelPercent(float level)
     {
         PermanentSoundLevel = Mathf.Clamp(PermanentSoundLevel + (level / 100), 0, 1);
+        AddSoundLevelPercent(-level);
         UpdateSoundBar();
     }
 

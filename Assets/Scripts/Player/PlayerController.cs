@@ -171,11 +171,11 @@ public class PlayerController : MonoBehaviour
         {
             Jump();
         }
-        if (Input.GetKeyDown(KeyCode.LeftControl))
+        if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.X))
         {
             Crouch(true);
         }
-        if (Input.GetKeyUp(KeyCode.LeftControl))
+        if (Input.GetKeyUp(KeyCode.LeftControl)||Input.GetKeyUp(KeyCode.X))
         {
             Crouch(false);
         }
