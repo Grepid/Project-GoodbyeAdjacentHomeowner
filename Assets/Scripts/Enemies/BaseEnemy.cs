@@ -19,7 +19,7 @@ public class BaseEnemy : MonoBehaviour
 
     private void Start()
     {
-        ProceedToTask();
+        DoTestTask();
     }
 
     public void Update()
@@ -55,15 +55,21 @@ public class BaseEnemy : MonoBehaviour
                 //if sees player break
                 //if gets to task break and call task 
                 //if noise is over threshold investigate
-                if (PlayerSensed())
+                if (CanSeePlayer())
                 {
+                    state = EnemyState.SpottedPlayer;
                     break;
                 }
-                
                 if(agent.remainingDistance < 0.5f)
                 {
                     task.StartTask(this);
                     state = EnemyState.DoingTask;
+                    break;
+                }
+                if (SoundDetection.instance.IsDetected)
+                {
+                    state = EnemyState.MovingToInvestigateNoise;
+                    agent.SetDestination(Player.Controller.transform.position);
                     break;
                 }
                 break;
@@ -73,9 +79,17 @@ public class BaseEnemy : MonoBehaviour
                 //if noise is over threshold investigate
                 //get the called task to call complete in here when completed
                 //if breaks early from task, call task stopped or something
-                if (PlayerSensed())
+                if (CanSeePlayer())
                 {
+                    state = EnemyState.SpottedPlayer;
                     task.LeaveTask(this);
+                    break;
+                }
+                if (SoundDetection.instance.IsDetected)
+                {
+                    state = EnemyState.MovingToInvestigateNoise;
+                    task.LeaveTask(this);
+                    agent.SetDestination(Player.Controller.transform.position);
                     break;
                 }
                 break;
@@ -83,15 +97,21 @@ public class BaseEnemy : MonoBehaviour
             case EnemyState.MovingToInvestigateNoise:
                 //if sees player break
                 //if get to area, start investigating noise itself (looking around and stuff)
-                if (PlayerSensed())
+                if (CanSeePlayer())
                 {
+                    state = EnemyState.SpottedPlayer;
                     break;
                 }
-                
                 if (agent.remainingDistance < 0.5f)
                 {
                     state = EnemyState.InvestigatingNoise;
                     timeOfStartInvestigation = Time.time;
+                    break;
+                }
+                if (SoundDetection.instance.IsDetected)
+                {
+                    state = EnemyState.MovingToInvestigateNoise;
+                    agent.SetDestination(Player.Controller.transform.position);
                     break;
                 }
 
@@ -100,11 +120,20 @@ public class BaseEnemy : MonoBehaviour
             case EnemyState.InvestigatingNoise:
                 //if sees player break
                 //looks around for x seconds then gets back to task if it wasnt complete, or else go to a new task
-                if (PlayerSensed()) break;
-
+                if (CanSeePlayer())
+                {
+                    state = EnemyState.SpottedPlayer;
+                    break;
+                }
+                if (SoundDetection.instance.IsDetected)
+                {
+                    state = EnemyState.MovingToInvestigateNoise;
+                    agent.SetDestination(Player.Controller.transform.position);
+                    break;
+                }
                 if (Time.time >= timeOfStartInvestigation + 5f)
                 {
-                    ProceedToTask();
+                    DoTestTask();
                 }
                 break;
 
@@ -114,8 +143,8 @@ public class BaseEnemy : MonoBehaviour
                 //if permanent sus is over y then plays game over cutscene
                 if (!CanSeePlayer())
                 {
-                    state = EnemyState.MovingToInvestigateNoise;
-                    agent.SetDestination(Player.Controller.transform.position);
+                    state = EnemyState.InvestigatingNoise;
+                    timeOfStartInvestigation = Time.time;
                 }
                 SoundDetection.instance.AddPermanentSoundLevelPercent(50 * Time.deltaTime);
                 if (SoundDetection.instance.IsTaggedAndCursed)
@@ -128,31 +157,7 @@ public class BaseEnemy : MonoBehaviour
         }
     }
     private float timeOfStartInvestigation;
-    private bool PlayerSensed()
-    {
-        if (CanSeePlayer())
-        {
-            PlayerSeen();
-            return true;
-        }
-        if (SoundDetection.instance.IsDetected)
-        {
-            PlayerHeard();
-            return true;
-        }
-        return false;
-    }
-    private void PlayerSeen()
-    {
-        state = EnemyState.SpottedPlayer;
-        agent.SetDestination(Player.Controller.transform.position);
-    }
-    private void PlayerHeard()
-    {
-        state = EnemyState.MovingToInvestigateNoise;
-        agent.SetDestination(Player.Controller.transform.position);
-    }
-    public void ProceedToTask()
+    public void DoTestTask()
     {
         state = EnemyState.MovingToTask;
         agent.SetDestination(task.transform.position);
