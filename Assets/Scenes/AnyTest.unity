@@ -1514,7 +1514,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   agent: {fileID: 1365260766}
   FOV: 90
-  detectionDistance: 7
+  detectionDistance: 15
   task: {fileID: 1399977293}
 --- !u!1 &1399977292
 GameObject:
