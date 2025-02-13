@@ -32,12 +32,15 @@ public class PlayerController : MonoBehaviour
     private float crouchHeight;
     private float standHeight;
 
+    [SerializeField]
+    private float crouchSpeedMultiplier,startingSprintMultiplier;
     public float SprintMultiplier { get; private set; }
     public void SetSprintMultiplier(float newMultiplier)
     {
         newMultiplier = Mathf.Clamp(newMultiplier,1,float.MaxValue);
         SprintMultiplier = newMultiplier;
     }
+    public bool Crouched { get; private set; }
 
     public float PlayerGravity;
     public float JumpStrength;
@@ -46,11 +49,15 @@ public class PlayerController : MonoBehaviour
     public int AllowedJumps;
     private int currentJumps;
     private Vector3 lastPos;
+
+    public float susPerSecond;
+
     public bool isGrounded { get; private set; }
     public bool canSprint;
     private void Awake()
     {
         Player.SetController(this);
+        SetSprintMultiplier(startingSprintMultiplier);
         standHeight = cc.height;
         currentJumps = AllowedJumps;
     }
@@ -74,7 +81,11 @@ public class PlayerController : MonoBehaviour
         MovementUpdate();
         CameraUpdate();
         CheckInputs();
-
+        if (movementDirection == Vector3.zero) return;
+        float sus = susPerSecond;
+        if (Crouched) sus *= crouchSpeedMultiplier;
+        if (Input.GetKey(KeyCode.LeftShift)) sus *= SprintMultiplier;
+        SoundDetection.instance.AddSoundLevelPercent(sus * Time.deltaTime);
     }
     private void LateUpdate()
     {
@@ -223,6 +234,7 @@ public class PlayerController : MonoBehaviour
             else
             {
                 cc.height = standHeight;
+                Crouched = false;
                 break;
             }
             yield return null;
@@ -240,6 +252,7 @@ public class PlayerController : MonoBehaviour
         else
         {
             cc.height = crouchHeight;
+            Crouched = true;
         }
     }
 

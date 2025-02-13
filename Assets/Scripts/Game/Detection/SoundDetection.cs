@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class SoundDetection : MonoBehaviour
 {
+    public static SoundDetection instance;
+
+
     [SerializeField]
     private RectTransform soundBar, permanentSoundBar;
 
@@ -17,10 +20,13 @@ public class SoundDetection : MonoBehaviour
     [SerializeField]
     private float permanentAddThresholdPercent,permanentPercentPerSecondInZone;
 
+    public bool IsTaggedAndCursed => PermanentSoundLevel >= (permanentAddThresholdPercent / 100);
+
     private float startingWidth;
 
     private void Awake()
     {
+        instance = this;    
         startingWidth = soundBar.rect.width;
         soundBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, TotalSoundLevel);
         permanentSoundBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, PermanentSoundLevel);
@@ -29,13 +35,12 @@ public class SoundDetection : MonoBehaviour
     private void Update()
     {
         SoundLevel = Mathf.Clamp(SoundLevel, 0, 1 - PermanentSoundLevel);
-        if (TotalSoundLevel > (permanentAddThresholdPercent / 100))
+        if (TotalSoundLevel > (permanentAddThresholdPercent / 100) && SoundLevel > 0)
         {
             AddPermanentSoundLevelPercent(permanentPercentPerSecondInZone * Time.deltaTime);
             AddSoundLevelPercent(-permanentPercentPerSecondInZone * Time.deltaTime);
         }
         AddSoundLevelPercent(-unSusPercentPerSecond * Time.deltaTime);
-        //UnSus();
 
         //Debug
         if (Input.GetKeyDown(KeyCode.X))
@@ -70,12 +75,6 @@ public class SoundDetection : MonoBehaviour
         }
     }
 
-    private void UnSus()
-    {
-        SoundLevel = Mathf.Clamp(SoundLevel - ((unSusPercentPerSecond/100) * Time.deltaTime), 0, 1);
-        UpdateSoundBar();
-    }
-
     public void SetAmbienceLevel(int level)
     {
         switch (level)
@@ -98,7 +97,7 @@ public class SoundDetection : MonoBehaviour
         }
     }
 
-    private void AddSoundLevelPercent(float level)
+    public void AddSoundLevelPercent(float level)
     {
         SoundLevel = Mathf.Clamp(SoundLevel + ((level / 100) * ambienceMultiplier), 0, 1-PermanentSoundLevel);
         UpdateSoundBar();

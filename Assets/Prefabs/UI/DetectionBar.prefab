@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4152801089730774442}
   - component: {fileID: 5022006287136515824}
   m_Layer: 0
-  m_Name: Image (4)
+  m_Name: PermanentThresholdBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -450,9 +450,9 @@ RectTransform:
   - {fileID: 1832276116051481160}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: 0, y: 50}
   m_SizeDelta: {x: 1010, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3733349209268781121
@@ -477,9 +477,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   soundBar: {fileID: 8051765432955728303}
   permanentSoundBar: {fileID: 9197388460929935310}
-  unSusPercentPerSecond: 0
-  permanentAddThresholdPercent: 0
-  permanentPercentPerSecondInZone: 0
+  unSusPercentPerSecond: 2
+  permanentAddThresholdPercent: 80
+  permanentPercentPerSecondInZone: 0.5
 --- !u!1 &8318253894757357812
 GameObject:
   m_ObjectHideFlags: 0
@@ -582,7 +582,7 @@ GameObject:
   - component: {fileID: 3294616009685621471}
   - component: {fileID: 955215151605560797}
   m_Layer: 0
-  m_Name: FillBar
+  m_Name: SoundBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
