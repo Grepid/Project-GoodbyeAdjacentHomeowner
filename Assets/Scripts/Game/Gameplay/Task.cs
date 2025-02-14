@@ -14,6 +14,8 @@ public class Task : MonoBehaviour
     public BaseEnemy occupant;
     private float completion;
 
+    public bool completed;
+
     
 
     private void Awake()
@@ -34,6 +36,7 @@ public class Task : MonoBehaviour
     {
         occupant = null;
         completion = 0;
+        completed = false;
     }
 
     public void StartTask(BaseEnemy caller)
@@ -50,6 +53,7 @@ public class Task : MonoBehaviour
     }
     public void CompleteTask()
     {
+        completed = true;
         OnComplete?.Invoke();
         occupant.TaskComplete();
         occupant = null;

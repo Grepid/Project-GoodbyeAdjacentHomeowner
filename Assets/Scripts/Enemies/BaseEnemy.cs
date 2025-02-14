@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using Grepid.BetterRandom;
 
 public enum EnemyState {Idle,MovingToTask,DoingTask,MovingToInvestigateNoise,InvestigatingNoise,SpottedPlayer}
 public class BaseEnemy : MonoBehaviour
@@ -13,13 +14,13 @@ public class BaseEnemy : MonoBehaviour
     public float detectionDistance;
     //Maybe make the ability to do tasks both a Player and Enemy thing from a common base class but idk if 
     //the player will ever need to do a task
-    public Task task;
+    private Task currentTask, DesiredTask;
 
     public EnemyState state { get; private set; }
 
     private void Start()
     {
-        ProceedToTask();
+        ProceedToTask(ChooseRandomTask());
     }
 
     public void Update()
@@ -30,7 +31,7 @@ public class BaseEnemy : MonoBehaviour
     {
         Vector3 direction = (Player.Controller.transform.position - transform.position).normalized;
         float angle = Vector3.Angle(transform.forward, direction);
-        if(angle <= (FOV / 2) && Vector3.Distance(Player.Controller.transform.position,transform.position) <= detectionDistance)
+        if(angle <= (FOV / 2f) && Vector3.Distance(Player.Controller.transform.position,transform.position) <= detectionDistance)
         {
             if(Physics.Raycast(transform.position,direction,out RaycastHit hit))
             {
@@ -61,7 +62,8 @@ public class BaseEnemy : MonoBehaviour
                 }
                 if (agent.remainingDistance < 0.5f)
                 {
-                    task.StartTask(this);
+                    DesiredTask.StartTask(this);
+                    currentTask = DesiredTask;
                     state = EnemyState.DoingTask;
                     break;
                 }
@@ -74,7 +76,8 @@ public class BaseEnemy : MonoBehaviour
                 //if breaks early from task, call task stopped or something
                 if (PlayerSensed())
                 {
-                    task.LeaveTask(this);
+                    currentTask.LeaveTask(this);
+                    currentTask = null;
                     break;
                 }
                 break;
@@ -102,9 +105,10 @@ public class BaseEnemy : MonoBehaviour
                 {
                     break;
                 }
+                transform.Rotate((Vector3.up * 360 / 5f) * Time.deltaTime);
                 if (Time.time >= timeOfStartInvestigation + 5f)
                 {
-                    ProceedToTask();
+                    TryResumeTask();
                 }
                 break;
 
@@ -112,16 +116,17 @@ public class BaseEnemy : MonoBehaviour
 
                 //adds x permanent sus per second when spotted
                 //if permanent sus is over y then plays game over cutscene
+                if (SoundDetection.instance.IsTaggedAndCursed)
+                {
+                    print("GGS YOU LOSE");
+                    break;
+                }
                 if (!CanSeePlayer())
                 {
                     state = EnemyState.InvestigatingNoise;
                     timeOfStartInvestigation = Time.time;
                 }
                 SoundDetection.instance.AddPermanentSoundLevelPercent(50 * Time.deltaTime);
-                if (SoundDetection.instance.IsTaggedAndCursed)
-                {
-                    print("GGS YOU LOSE");
-                }
                 break;
 
 
@@ -152,14 +157,38 @@ public class BaseEnemy : MonoBehaviour
         state = EnemyState.MovingToInvestigateNoise;
         agent.SetDestination(Player.Controller.transform.position);
     }
-    public void ProceedToTask()
+    public void ProceedToTask(Task task)
     {
         state = EnemyState.MovingToTask;
+        DesiredTask = task;
         agent.SetDestination(task.transform.position);
+    }
+    public Task ChooseRandomTask()
+    {
+        //Instead of looping in order, make selection truly random
+        Task task = null;
+        task = LevelController.Instance.Tasks.Find(t => !t.completed);
+        if(task == null)
+        {
+            foreach(var ta in LevelController.Instance.Tasks)
+            {
+                ta.ResetTask();
+            }
+            task = LevelController.Instance.Tasks.Find(t => !t.completed);
+        }
+        return task;
     }
     public void TaskComplete()
     {
-        print("task completed");
+        ProceedToTask(ChooseRandomTask());
     }
-
+    private void TryResumeTask()
+    {
+        if (DesiredTask.completed)
+        {
+            ProceedToTask(ChooseRandomTask());
+            return;
+        }
+        ProceedToTask(DesiredTask);
+    }
 }
