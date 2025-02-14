@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -277,7 +278,7 @@ namespace Grepid.BetterRandom
         /// <param name="noDupes"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public static T[] RandFromCollection<T>(ICollection<T> objects,int repetitions,bool noDupes)
+        public static ICollection<T> RandFromCollection<T>(ICollection<T> objects,int repetitions,bool noDupes)
         {
             T[] result = new T[repetitions];
             List<int> usedIndexes = new List<int>();
@@ -295,6 +296,11 @@ namespace Grepid.BetterRandom
                 x++;
             }
             return result;
+        }
+        
+        public static ICollection<T> ShuffleCollection<T>(ICollection<T> objects)
+        {
+            return RandFromCollection(objects, objects.Count, true);
         }
     }
     #endregion

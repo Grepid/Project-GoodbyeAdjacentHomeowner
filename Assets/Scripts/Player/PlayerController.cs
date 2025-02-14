@@ -83,7 +83,8 @@ public class PlayerController : MonoBehaviour
         CheckInputs();
         if (movementDirection == Vector3.zero) return;
         float sus = susPerSecond;
-        if (Crouched) sus *= crouchSpeedMultiplier;
+        //if (Crouched) sus *= crouchSpeedMultiplier;
+        if (Crouched) sus *= 0;
         if (Input.GetKey(KeyCode.LeftShift)) sus *= SprintMultiplier;
         SoundDetection.instance.AddSoundLevelPercent(sus * Time.deltaTime);
     }
@@ -111,6 +112,7 @@ public class PlayerController : MonoBehaviour
 
         //Will add a multiplier to speed if the player is holding shift (will be dynamic later)
         adjustedSpeed = Input.GetKey(KeyCode.LeftShift) && CanSprint() ? moveSpeed * SprintMultiplier : moveSpeed;
+        adjustedSpeed = Crouched ? adjustedSpeed * crouchSpeedMultiplier : adjustedSpeed;
 
 
     }

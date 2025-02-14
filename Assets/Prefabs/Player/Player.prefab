@@ -148,8 +148,8 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 2
-  m_Radius: 0.5
+  m_Height: 1.5
+  m_Radius: 0.3
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
@@ -172,10 +172,13 @@ MonoBehaviour:
   moveSpeed: 5
   mouseSens: {x: 100, y: 100}
   crouchHeight: 1
+  crouchSpeedMultiplier: 0.5
+  startingSprintMultiplier: 1.5
   PlayerGravity: 9
   JumpStrength: 3
   ExtraJumpStrength: 1.5
   AllowedJumps: 1
+  susPerSecond: 3
   canSprint: 1
 --- !u!114 &4438727056320394805
 MonoBehaviour:

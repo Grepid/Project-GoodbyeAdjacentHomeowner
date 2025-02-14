@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using Grepid.BetterRandom;
+using System.Linq;
 
 public enum EnemyState {Idle,MovingToTask,DoingTask,MovingToInvestigateNoise,InvestigatingNoise,SpottedPlayer}
 public class BaseEnemy : MonoBehaviour
@@ -15,14 +16,25 @@ public class BaseEnemy : MonoBehaviour
     //Maybe make the ability to do tasks both a Player and Enemy thing from a common base class but idk if 
     //the player will ever need to do a task
     private Task currentTask, DesiredTask;
+    public List<Task> potentialTasks;
 
     public EnemyState state { get; private set; }
 
     private void Start()
     {
         ProceedToTask(ChooseRandomTask());
+        
     }
+    bool init;
+    private void OnEnable()
+    {
+        if (init) return;
 
+        potentialTasks = Rand.ShuffleCollection(LevelController.Instance.Tasks).ToList();
+
+        init = true;
+    }
+    
     public void Update()
     {
         TryChangeState();
@@ -167,7 +179,10 @@ public class BaseEnemy : MonoBehaviour
     {
         //Instead of looping in order, make selection truly random
         Task task = null;
-        task = LevelController.Instance.Tasks.Find(t => !t.completed);
+        if (potentialTasks.Count <= 0) potentialTasks = Rand.ShuffleCollection(LevelController.Instance.Tasks).ToList();
+
+        task = Rand.RandFromCollection(potentialTasks);
+        /*task = LevelController.Instance.Tasks.Find(t => !t.completed);
         if(task == null)
         {
             foreach(var ta in LevelController.Instance.Tasks)
@@ -175,11 +190,13 @@ public class BaseEnemy : MonoBehaviour
                 ta.ResetTask();
             }
             task = LevelController.Instance.Tasks.Find(t => !t.completed);
-        }
+        }*/
         return task;
     }
     public void TaskComplete()
     {
+        currentTask.ResetTask();
+        potentialTasks.Remove(currentTask);
         ProceedToTask(ChooseRandomTask());
     }
     private void TryResumeTask()
@@ -190,5 +207,9 @@ public class BaseEnemy : MonoBehaviour
             return;
         }
         ProceedToTask(DesiredTask);
+    }
+    private void ResetTasks()
+    {
+
     }
 }
