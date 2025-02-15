@@ -21,6 +21,7 @@ public class BaseEnemy : MonoBehaviour
     private Task currentTask, DesiredTask;
     public float walkingSpeed,investigatingSpeed;
     public List<Task> potentialTasks;
+    public TextMeshProUGUI debugText;
 
     public EnemyState state { get; private set; }
 
@@ -42,6 +43,13 @@ public class BaseEnemy : MonoBehaviour
     public void Update()
     {
         TryChangeState();
+        debugText.text = $"State: {state}";
+        //Debug stuff
+        //WorkOutSin();
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            counter = 0;
+        }
     }
     private bool CanSeePlayer()
     {
@@ -61,7 +69,6 @@ public class BaseEnemy : MonoBehaviour
     }
     private void TryChangeState()
     {
-        
         switch (state)
         {
             case EnemyState.Idle:
@@ -118,6 +125,7 @@ public class BaseEnemy : MonoBehaviour
                 if (agent.remainingDistance < 0.5f)
                 {
                     state = EnemyState.InvestigatingNoise;
+                    startingRotFromInvestigation = transform.eulerAngles.y;
                     timeOfStartInvestigation = Time.time;
                     break;
                 }
@@ -133,7 +141,15 @@ public class BaseEnemy : MonoBehaviour
                 {
                     break;
                 }
-                transform.Rotate((Vector3.up * 360 / 5f) * Time.deltaTime);
+                //transform.Rotate((Vector3.up * 360 / 5f) * Time.deltaTime); 
+
+                Vector3 rot = transform.eulerAngles;
+                rot.y = startingRotFromInvestigation + (90 * Mathf.Sin(Time.time - timeOfStartInvestigation));
+                //print(Time.time - timeOfStartInvestigation);
+                //print((90 * Mathf.Sin(Time.time - timeOfStartInvestigation)));
+                print(Mathf.Sin(Time.time-timeOfStartInvestigation));
+                transform.eulerAngles = rot;
+
                 if (Time.time >= timeOfStartInvestigation + 5f)
                 {
                     TryResumeTask();
@@ -164,6 +180,7 @@ public class BaseEnemy : MonoBehaviour
 
         }
     }
+    float startingRotFromInvestigation;
     private float timeOfStartInvestigation;
     private bool PlayerSensed()
     {
@@ -222,8 +239,11 @@ public class BaseEnemy : MonoBehaviour
         }
         ProceedToTask(DesiredTask);
     }
-    private void ResetTasks()
+    float counter;
+    private void WorkOutSin()
     {
-
+        
+        print(Mathf.Sin(counter));
+        counter += Time.deltaTime;
     }
 }
