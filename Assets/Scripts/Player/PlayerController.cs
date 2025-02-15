@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Xml.Linq;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -182,6 +183,11 @@ public class PlayerController : MonoBehaviour
             Crouch(false);
         }
 
+        //Debug
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            SceneManager.LoadScene("AnyTest");
+        }
 
     }
     private void Jump()
@@ -190,6 +196,7 @@ public class PlayerController : MonoBehaviour
         float strength = currentJumps != AllowedJumps ? JumpStrength * ExtraJumpStrength : JumpStrength;
         currentJumps--;
         velocity = Vector3.up * strength;
+        SoundDetection.instance.AddSoundLevelPercent(10);
 
         StartPostJump();
     }
@@ -262,6 +269,11 @@ public class PlayerController : MonoBehaviour
     {
         Cursor.lockState = value ? CursorLockMode.Confined : CursorLockMode.Locked;
         Cursor.visible = value;
+        SetPlayerControl(!value);
+    }
+    public void SetPlayerControl(bool value)
+    {
+        controlling = value;
     }
 
 }

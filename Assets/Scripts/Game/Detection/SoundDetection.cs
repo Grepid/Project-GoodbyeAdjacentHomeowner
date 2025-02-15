@@ -75,6 +75,12 @@ public class SoundDetection : MonoBehaviour
             SetAmbienceLevel(0);
         }
     }
+    bool needsUpdate;
+    private void LateUpdate()
+    {
+        if(needsUpdate)UpdateSoundBar();
+        needsUpdate = false;
+    }
 
     public void SetAmbienceLevel(int level)
     {
@@ -101,14 +107,16 @@ public class SoundDetection : MonoBehaviour
     public void AddSoundLevelPercent(float level)
     {
         SoundLevel = Mathf.Clamp(SoundLevel + ((level / 100) * ambienceMultiplier), 0, 1-PermanentSoundLevel);
-        UpdateSoundBar();
+        //UpdateSoundBar();
+        needsUpdate = true;
     }
 
     public void AddPermanentSoundLevelPercent(float level)
     {
         PermanentSoundLevel = Mathf.Clamp(PermanentSoundLevel + (level / 100), 0, 1);
         AddSoundLevelPercent(-level);
-        UpdateSoundBar();
+        //UpdateSoundBar();
+        needsUpdate = true;
     }
 
     private void UpdateSoundBar()

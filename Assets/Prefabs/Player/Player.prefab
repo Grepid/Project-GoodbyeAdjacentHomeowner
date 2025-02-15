@@ -175,7 +175,7 @@ MonoBehaviour:
   crouchSpeedMultiplier: 0.5
   startingSprintMultiplier: 1.5
   PlayerGravity: 9
-  JumpStrength: 3
+  JumpStrength: 4
   ExtraJumpStrength: 1.5
   AllowedJumps: 1
   susPerSecond: 3
