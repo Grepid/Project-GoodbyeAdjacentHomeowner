@@ -87,7 +87,7 @@ public class PlayerController : MonoBehaviour
         //if (Crouched) sus *= crouchSpeedMultiplier;
         if (Crouched) sus *= 0;
         if (Input.GetKey(KeyCode.LeftShift)) sus *= SprintMultiplier;
-        SoundDetection.instance.AddSoundLevelPercent(sus * Time.deltaTime);
+        SoundDetection.instance.AddTemporarySuspicionPercent(sus * Time.deltaTime);
     }
     private void LateUpdate()
     {
@@ -196,7 +196,7 @@ public class PlayerController : MonoBehaviour
         float strength = currentJumps != AllowedJumps ? JumpStrength * ExtraJumpStrength : JumpStrength;
         currentJumps--;
         velocity = Vector3.up * strength;
-        SoundDetection.instance.AddSoundLevelPercent(10);
+        SoundDetection.instance.AddTemporarySuspicionPercent(10);
 
         StartPostJump();
     }

@@ -174,7 +174,7 @@ public class BaseEnemy : MonoBehaviour
                     state = EnemyState.InvestigatingNoise;
                     timeOfStartInvestigation = Time.time;
                 }
-                SoundDetection.instance.AddPermanentSoundLevelPercent(50 * Time.deltaTime);
+                SoundDetection.instance.AddPermanentSuspicionPercent(50 * Time.deltaTime);
                 break;
 
 

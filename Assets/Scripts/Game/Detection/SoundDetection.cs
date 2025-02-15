@@ -8,53 +8,57 @@ public class SoundDetection : MonoBehaviour
 
 
     [SerializeField]
-    private RectTransform soundBar, permanentSoundBar;
+    private RectTransform temporarySuspicionBar, permanentSuspicionBar;
 
-    public float SoundLevel { get; private set; }
-    public float PermanentSoundLevel { get; private set; }
+    public float TemporarySuspicion { get; private set; }
+    public float PermanentSuspicion { get; private set; }
 
     public float AmbienceLevel { get; private set; }
     private float ambienceMultiplier = 1;
-    public float TotalSoundLevel => SoundLevel + PermanentSoundLevel;
-    public float unSusPercentPerSecond;
+    public float TotalSuspicion => TemporarySuspicion + PermanentSuspicion;
+    public float TemporarySuspicionLostPerSecond;
     [SerializeField]
     private float detectionPerecent,permanentPercentPerSecondInZone;
 
-    public bool IsTaggedAndCursed => PermanentSoundLevel >= (detectionPerecent / 100);
-    public bool IsDetected => TotalSoundLevel >= (detectionPerecent/100);
+    public bool IsTaggedAndCursed => PermanentSuspicion >= (detectionPerecent / 100);
+    public bool IsDetected => TotalSuspicion >= (detectionPerecent/100);
 
     private float startingWidth;
 
     private void Awake()
     {
         instance = this;    
-        startingWidth = soundBar.rect.width;
-        soundBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, TotalSoundLevel);
-        permanentSoundBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, PermanentSoundLevel);
+        startingWidth = temporarySuspicionBar.rect.width;
+        temporarySuspicionBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, TotalSuspicion);
+        permanentSuspicionBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, PermanentSuspicion);
     }
 
     private void Update()
     {
-        SoundLevel = Mathf.Clamp(SoundLevel, 0, 1 - PermanentSoundLevel);
-        if (TotalSoundLevel > (detectionPerecent / 100) && SoundLevel > 0)
+        TemporarySuspicion = Mathf.Clamp(TemporarySuspicion, 0, 1 - PermanentSuspicion);
+        if (TotalSuspicion > (detectionPerecent / 100) && TemporarySuspicion > 0)
         {
-            AddPermanentSoundLevelPercent(permanentPercentPerSecondInZone * Time.deltaTime);
+            AddPermanentSuspicionPercent(permanentPercentPerSecondInZone * Time.deltaTime);
             //AddSoundLevelPercent(-permanentPercentPerSecondInZone * Time.deltaTime);
         }
-        AddSoundLevelPercent(-unSusPercentPerSecond * Time.deltaTime);
+        AddTemporarySuspicionPercent(-TemporarySuspicionLostPerSecond * Time.deltaTime);
 
         //Debug binds
         if (Input.GetKeyDown(KeyCode.Z))
         {
-            AddSoundLevelPercent(10);
+            AddTemporarySuspicionPercent(10);
+        }
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            AddTemporarySuspicionPercent(-10);
         }
         if (Input.GetKeyDown(KeyCode.E))
         {
-            AddPermanentSoundLevelPercent(10);
+            AddPermanentSuspicionPercent(10);
         }
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            AddPermanentSoundLevelPercent(-10);
+            AddPermanentSuspicionPercent(-10);
         }
 
 
@@ -78,7 +82,7 @@ public class SoundDetection : MonoBehaviour
     bool needsUpdate;
     private void LateUpdate()
     {
-        if(needsUpdate)UpdateSoundBar();
+        if(needsUpdate)UpdateSuspicionBar();
         needsUpdate = false;
     }
 
@@ -104,26 +108,26 @@ public class SoundDetection : MonoBehaviour
         }
     }
 
-    public void AddSoundLevelPercent(float level)
+    public void AddTemporarySuspicionPercent(float level)
     {
-        SoundLevel = Mathf.Clamp(SoundLevel + ((level / 100) * ambienceMultiplier), 0, 1-PermanentSoundLevel);
+        TemporarySuspicion = Mathf.Clamp(TemporarySuspicion + ((level / 100) * ambienceMultiplier), 0, 1-PermanentSuspicion);
         //UpdateSoundBar();
         needsUpdate = true;
     }
 
-    public void AddPermanentSoundLevelPercent(float level)
+    public void AddPermanentSuspicionPercent(float level)
     {
-        PermanentSoundLevel = Mathf.Clamp(PermanentSoundLevel + (level / 100), 0, 1);
-        AddSoundLevelPercent(-level);
+        PermanentSuspicion = Mathf.Clamp(PermanentSuspicion + (level / 100), 0, 1);
+        AddTemporarySuspicionPercent(-level);
         //UpdateSoundBar();
         needsUpdate = true;
     }
 
-    private void UpdateSoundBar()
+    private void UpdateSuspicionBar()
     {
-        if (soundBar == null) return;
-        soundBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Lerp(0f, startingWidth, TotalSoundLevel));
-        permanentSoundBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Lerp(0f, startingWidth, PermanentSoundLevel));
+        if (temporarySuspicionBar == null) return;
+        temporarySuspicionBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Lerp(0f, startingWidth, TotalSuspicion));
+        permanentSuspicionBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Lerp(0f, startingWidth, PermanentSuspicion));
 
     }
 }
