@@ -72,7 +72,15 @@ public class BaseEnemy : MonoBehaviour
         switch (state)
         {
             case EnemyState.Idle:
-                //Idk if this will have a use anyway atm
+                //Maybe use Idle is a transition state where it wants to see what its next priority should be
+
+                if (PlayerSensed())
+                {
+                    break;
+                }
+
+                //Do things like check if there is an environmental object on
+
                 break;
 
             case EnemyState.MovingToTask:
