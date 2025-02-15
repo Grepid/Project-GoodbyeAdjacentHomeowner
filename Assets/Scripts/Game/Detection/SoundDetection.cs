@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class SoundDetection : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class SoundDetection : MonoBehaviour
 
     public float TemporarySuspicion { get; private set; }
     public float PermanentSuspicion { get; private set; }
+
+    
 
     public float AmbienceLevel { get; private set; }
     private float ambienceMultiplier = 1;
@@ -44,7 +47,7 @@ public class SoundDetection : MonoBehaviour
         AddTemporarySuspicionPercent(-TemporarySuspicionLostPerSecond * Time.deltaTime);
 
         //Debug binds
-        if (Input.GetKeyDown(KeyCode.Z))
+        /*if (Input.GetKeyDown(KeyCode.Z))
         {
             AddTemporarySuspicionPercent(10);
         }
@@ -77,7 +80,7 @@ public class SoundDetection : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha0))
         {
             SetAmbienceLevel(0);
-        }
+        }*/
     }
     bool needsUpdate;
     private void LateUpdate()

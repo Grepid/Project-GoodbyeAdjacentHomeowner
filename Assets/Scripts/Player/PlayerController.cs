@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Xml.Linq;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
@@ -15,6 +16,12 @@ public class PlayerController : MonoBehaviour
     private GameObject camArm;
 
     public bool controlling { get; private set; }
+
+    public PlayerInputControls PlayerInputControls;
+    private InputAction IA_Movement;
+    private InputAction IA_Jump;
+    private InputAction IA_Look;
+
 
     [SerializeField]
     private float moveSpeed;
@@ -58,9 +65,29 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         Player.SetController(this);
+        this.PlayerInputControls = new PlayerInputControls();
         SetSprintMultiplier(startingSprintMultiplier);
         standHeight = cc.height;
         currentJumps = AllowedJumps;
+    }
+
+    private void OnEnable()
+    {
+        IA_Movement = PlayerInputControls.Player.Move;
+        IA_Movement.Enable();
+
+        IA_Jump = PlayerInputControls.Player.Jump;
+        IA_Jump.Enable();
+        IA_Jump.performed += JumpCall;
+
+        IA_Look = PlayerInputControls.Player.Look;
+        IA_Look.Enable();
+    }
+    private void OnDisable()
+    {
+        IA_Movement.Disable();
+        IA_Jump.Disable();
+        IA_Look.Disable();
     }
 
     private void Start()
@@ -86,7 +113,7 @@ public class PlayerController : MonoBehaviour
         float sus = susPerSecond;
         //if (Crouched) sus *= crouchSpeedMultiplier;
         if (Crouched) sus *= 0;
-        if (Input.GetKey(KeyCode.LeftShift)) sus *= SprintMultiplier;
+        //if (Input.GetKey(KeyCode.LeftShift)) sus *= SprintMultiplier;
         SoundDetection.instance.AddTemporarySuspicionPercent(sus * Time.deltaTime);
     }
     private void LateUpdate()
@@ -96,23 +123,33 @@ public class PlayerController : MonoBehaviour
     private void AssignVariables()
     {
         //Left / Right
-        float lookX = Input.GetAxis("Mouse X") * Time.smoothDeltaTime * mouseSens.x;
+        float lookX = 0;//Input.GetAxis("Mouse X") * Time.smoothDeltaTime * mouseSens.x;
         //Up / Down
-        float lookY = Input.GetAxis("Mouse Y") * Time.smoothDeltaTime * mouseSens.y * -1;
+        float lookY = 0;//Input.GetAxis("Mouse Y") * Time.smoothDeltaTime * mouseSens.y * -1;
 
-        lookXY.x = Mathf.Clamp(lookXY.x + lookY, -90, 90);
-        lookXY.y += lookX;
+        Vector2 look = IA_Look.ReadValue<Vector2>();
+
+        look *= Time.smoothDeltaTime;
+
+        look.x *= mouseSens.x;
+        look.y *= mouseSens.y;
+
+        lookXY.x = Mathf.Clamp(lookXY.x + -look.y, -90, 90);
+        lookXY.y += look.x;
 
         //Forward / Backward
-        float fb = Input.GetAxis("Vertical");
+        float fb = 0;// Input.GetAxis("Vertical");
 
         //Left / Right
-        float lr = Input.GetAxis("Horizontal");
+        float lr = 0;// Input.GetAxis("Horizontal");
 
-        movementDirection = transform.forward * fb + transform.right * lr;
+
+        Vector2 movDir = IA_Movement.ReadValue<Vector2>();
+
+        movementDirection = transform.forward * movDir.y + transform.right * movDir.x;
 
         //Will add a multiplier to speed if the player is holding shift (will be dynamic later)
-        adjustedSpeed = Input.GetKey(KeyCode.LeftShift) && CanSprint() ? moveSpeed * SprintMultiplier : moveSpeed;
+        adjustedSpeed = 1;// Input.GetKey(KeyCode.LeftShift) && CanSprint() ? moveSpeed * SprintMultiplier : moveSpeed;
         adjustedSpeed = Crouched ? adjustedSpeed * crouchSpeedMultiplier : adjustedSpeed;
 
 
@@ -170,7 +207,7 @@ public class PlayerController : MonoBehaviour
     }
     private void CheckInputs()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        /*if (Input.GetKeyDown(KeyCode.Space))
         {
             Jump();
         }
@@ -187,8 +224,13 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R))
         {
             SceneManager.LoadScene("AnyTest");
-        }
+        }*/
 
+    }
+
+    private void JumpCall(InputAction.CallbackContext context)
+    {
+        Jump();
     }
     private void Jump()
     {

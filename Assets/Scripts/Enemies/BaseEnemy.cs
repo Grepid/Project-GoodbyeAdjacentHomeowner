@@ -46,10 +46,10 @@ public class BaseEnemy : MonoBehaviour
         debugText.text = $"State: {state}";
         //Debug stuff
         //WorkOutSin();
-        if (Input.GetKeyDown(KeyCode.L))
+        /*if (Input.GetKeyDown(KeyCode.L))
         {
             counter = 0;
-        }
+        }*/
     }
     private bool CanSeePlayer()
     {
