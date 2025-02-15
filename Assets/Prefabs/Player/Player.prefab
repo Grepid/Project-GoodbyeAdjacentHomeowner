@@ -170,57 +170,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cc: {fileID: 455289487264331458}
   camArm: {fileID: 604464240333727441}
-  PlayerContols:
-    m_Name: Player Contols
-    m_Type: 0
-    m_ExpectedControlType: 
-    m_Id: b19f1bd4-a83b-48db-86cc-df8847b2ff8f
-    m_Processors: 
-    m_Interactions: 
-    m_SingletonActionBindings:
-    - m_Name: WASD
-      m_Id: a514994b-a531-4819-a948-8bdcd5190be4
-      m_Path: 2DVector
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Player Contols
-      m_Flags: 4
-    - m_Name: up
-      m_Id: 69c97bbf-123f-44e4-b58d-9f671816a257
-      m_Path: <Keyboard>/w
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Player Contols
-      m_Flags: 8
-    - m_Name: down
-      m_Id: 5b8a2e12-24a7-499d-9fa9-8a000a4ede11
-      m_Path: <Keyboard>/s
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Player Contols
-      m_Flags: 8
-    - m_Name: left
-      m_Id: c9b33706-f6ea-47e6-a499-91dfa6fea02f
-      m_Path: <Keyboard>/a
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Player Contols
-      m_Flags: 8
-    - m_Name: right
-      m_Id: ed958f46-2662-4046-b463-97745231a822
-      m_Path: <Keyboard>/d
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Player Contols
-      m_Flags: 8
-    m_Flags: 0
   moveSpeed: 5
-  mouseSens: {x: 100, y: 100}
+  mouseSens: {x: 10, y: 10}
   crouchHeight: 1
   crouchSpeedMultiplier: 0.5
   startingSprintMultiplier: 1.5
@@ -228,7 +179,7 @@ MonoBehaviour:
   JumpStrength: 4
   ExtraJumpStrength: 1.5
   AllowedJumps: 1
-  susPerSecond: 3
+  susPerSecond: 5
   canSprint: 1
 --- !u!114 &4438727056320394805
 MonoBehaviour:
@@ -294,7 +245,7 @@ MonoBehaviour:
       m_Calls: []
   m_ActionEvents: []
   m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: 
+  m_DefaultControlScheme: Gamepad
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}

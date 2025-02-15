@@ -17,10 +17,8 @@ public class PlayerController : MonoBehaviour
 
     public bool controlling { get; private set; }
 
-    public PlayerInputControls PlayerInputControls;
-    private InputAction IA_Movement;
-    private InputAction IA_Jump;
-    private InputAction IA_Look;
+    public PlayerInputControls PIC;
+    private InputAction IA_Movement, IA_Look,IA_Crouch;
 
 
     [SerializeField]
@@ -65,29 +63,24 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         Player.SetController(this);
-        this.PlayerInputControls = new PlayerInputControls();
+        this.PIC = new PlayerInputControls();
         SetSprintMultiplier(startingSprintMultiplier);
         standHeight = cc.height;
         currentJumps = AllowedJumps;
     }
-
     private void OnEnable()
     {
-        IA_Movement = PlayerInputControls.Player.Move;
-        IA_Movement.Enable();
+        PIC.Enable();
 
-        IA_Jump = PlayerInputControls.Player.Jump;
-        IA_Jump.Enable();
-        IA_Jump.performed += JumpCall;
+        IA_Movement = PIC.Player.Move;
 
-        IA_Look = PlayerInputControls.Player.Look;
-        IA_Look.Enable();
+        IA_Look = PIC.Player.Look;
+
+        IA_Crouch = PIC.Player.Crouch;
     }
     private void OnDisable()
     {
-        IA_Movement.Disable();
-        IA_Jump.Disable();
-        IA_Look.Disable();
+        PIC.Disable();
     }
 
     private void Start()
@@ -99,15 +92,14 @@ public class PlayerController : MonoBehaviour
     {
         CheckGrounded();
     }
-
+    
 
     // Update is called once per frame
     void Update()
     {
-        //if (<add bool for player controls here>) return;
+        if (!controlling) return;
         AssignVariables();
         MovementUpdate();
-        CameraUpdate();
         CheckInputs();
         if (movementDirection == Vector3.zero) return;
         float sus = susPerSecond;
@@ -118,15 +110,11 @@ public class PlayerController : MonoBehaviour
     }
     private void LateUpdate()
     {
+        CameraUpdate();
         lastPos = transform.position;
     }
     private void AssignVariables()
     {
-        //Left / Right
-        float lookX = 0;//Input.GetAxis("Mouse X") * Time.smoothDeltaTime * mouseSens.x;
-        //Up / Down
-        float lookY = 0;//Input.GetAxis("Mouse Y") * Time.smoothDeltaTime * mouseSens.y * -1;
-
         Vector2 look = IA_Look.ReadValue<Vector2>();
 
         look *= Time.smoothDeltaTime;
@@ -137,19 +125,13 @@ public class PlayerController : MonoBehaviour
         lookXY.x = Mathf.Clamp(lookXY.x + -look.y, -90, 90);
         lookXY.y += look.x;
 
-        //Forward / Backward
-        float fb = 0;// Input.GetAxis("Vertical");
-
-        //Left / Right
-        float lr = 0;// Input.GetAxis("Horizontal");
-
-
         Vector2 movDir = IA_Movement.ReadValue<Vector2>();
 
         movementDirection = transform.forward * movDir.y + transform.right * movDir.x;
 
         //Will add a multiplier to speed if the player is holding shift (will be dynamic later)
-        adjustedSpeed = 1;// Input.GetKey(KeyCode.LeftShift) && CanSprint() ? moveSpeed * SprintMultiplier : moveSpeed;
+        adjustedSpeed = PIC.Player.Sprint.IsPressed() && CanSprint() ? moveSpeed * SprintMultiplier : moveSpeed;
+
         adjustedSpeed = Crouched ? adjustedSpeed * crouchSpeedMultiplier : adjustedSpeed;
 
 
@@ -207,28 +189,26 @@ public class PlayerController : MonoBehaviour
     }
     private void CheckInputs()
     {
-        /*if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Jump();
-        }
-        if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.X))
+        
+        if (PIC.Player.Crouch.WasPressedThisFrame())
         {
             Crouch(true);
         }
-        if (Input.GetKeyUp(KeyCode.LeftControl)||Input.GetKeyUp(KeyCode.X))
+        if (PIC.Player.Crouch.WasReleasedThisFrame())
         {
             Crouch(false);
         }
 
         //Debug
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Keyboard.current.rKey.wasPressedThisFrame)
         {
             SceneManager.LoadScene("AnyTest");
-        }*/
+        }
 
     }
 
-    private void JumpCall(InputAction.CallbackContext context)
+
+    private void OnJump()
     {
         Jump();
     }
@@ -316,6 +296,8 @@ public class PlayerController : MonoBehaviour
     public void SetPlayerControl(bool value)
     {
         controlling = value;
+        if (value) PIC.Enable();
+        else PIC.Disable();
     }
 
 }

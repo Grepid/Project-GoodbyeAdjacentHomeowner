@@ -868,18 +868,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 5062597353463020753, guid: 10dfff3f0f4e59948a885cc38f8c9020, type: 3}
-      propertyPath: mouseSens.x
-      value: 50
-      objectReference: {fileID: 0}
-    - target: {fileID: 5062597353463020753, guid: 10dfff3f0f4e59948a885cc38f8c9020, type: 3}
-      propertyPath: mouseSens.y
-      value: 50
-      objectReference: {fileID: 0}
-    - target: {fileID: 5062597353463020753, guid: 10dfff3f0f4e59948a885cc38f8c9020, type: 3}
-      propertyPath: susPerSecond
-      value: 5
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
