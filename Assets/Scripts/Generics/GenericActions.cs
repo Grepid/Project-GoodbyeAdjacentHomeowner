@@ -35,9 +35,4 @@ public class GenericActions : InteractionBase
         }
     }
 
-    [ContextMenu("FlipRepeats")]
-    private void FlipRepeats()
-    {
-        Repeats = !Repeats;
-    }
 }

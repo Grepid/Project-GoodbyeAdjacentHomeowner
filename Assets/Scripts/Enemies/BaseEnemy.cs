@@ -25,6 +25,11 @@ public class BaseEnemy : MonoBehaviour
 
     public EnemyState state { get; private set; }
 
+    private void Awake()
+    {
+        
+    }
+
     private void Start()
     {
         ProceedToTask(ChooseRandomTask());
@@ -238,5 +243,13 @@ public class BaseEnemy : MonoBehaviour
             return;
         }
         ProceedToTask(DesiredTask);
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        Door door = collision.gameObject.GetComponent<Door>();
+        if (door != null)
+        {
+            door.OpenDoor(true);
+        }
     }
 }

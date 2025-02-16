@@ -18,7 +18,7 @@ public class PlayerController : MonoBehaviour
     public bool controlling { get; private set; }
 
     public PlayerInputControls PIC;
-    private InputAction IA_Movement, IA_Look,IA_Crouch;
+    private InputAction IA_Movement, IA_Look;
 
 
     [SerializeField]
@@ -27,7 +27,7 @@ public class PlayerController : MonoBehaviour
     private float adjustedSpeed;
 
     [SerializeField]
-    private Vector2 mouseSens;
+    private Vector2 mouseSens,gamepadSens;
 
     private Vector3 velocity;
 
@@ -60,6 +60,7 @@ public class PlayerController : MonoBehaviour
 
     public bool isGrounded { get; private set; }
     public bool canSprint;
+    public PlayerInput PlayerIn;
     private void Awake()
     {
         Player.SetController(this);
@@ -75,8 +76,6 @@ public class PlayerController : MonoBehaviour
         IA_Movement = PIC.Player.Move;
 
         IA_Look = PIC.Player.Look;
-
-        IA_Crouch = PIC.Player.Crouch;
     }
     private void OnDisable()
     {
@@ -119,10 +118,12 @@ public class PlayerController : MonoBehaviour
 
         look *= Time.smoothDeltaTime;
 
-        look.x *= mouseSens.x;
-        look.y *= mouseSens.y;
+        look.x *= PlayerIn.currentControlScheme == PIC.KeyboardMouseScheme.name? mouseSens.x : gamepadSens.x;
+        look.y *= PlayerIn.currentControlScheme == PIC.KeyboardMouseScheme.name ? mouseSens.y : gamepadSens.y;
 
-        look *= (Gamepad.current != null && Gamepad.current.rightStick.magnitude > 0) ? 20 : 1;
+        //look *= (Gamepad.current != null && Gamepad.current.rightStick.magnitude > 0) ? 20 : 1;
+
+        
 
         lookXY.x = Mathf.Clamp(lookXY.x + -look.y, -90, 90);
         lookXY.y += look.x;
