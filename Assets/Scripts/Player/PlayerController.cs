@@ -106,7 +106,7 @@ public class PlayerController : MonoBehaviour
         //if (Crouched) sus *= crouchSpeedMultiplier;
         if (Crouched) sus *= 0;
         //if (Input.GetKey(KeyCode.LeftShift)) sus *= SprintMultiplier;
-        SoundDetection.instance.AddTemporarySuspicionPercent(sus * Time.deltaTime);
+        SoundDetection.instance.AddTemporarySuspicionPercent(sus * IA_Movement.ReadValue<Vector2>().magnitude * Time.deltaTime);
     }
     private void LateUpdate()
     {
@@ -122,6 +122,8 @@ public class PlayerController : MonoBehaviour
         look.x *= mouseSens.x;
         look.y *= mouseSens.y;
 
+        look *= (Gamepad.current != null && Gamepad.current.rightStick.magnitude > 0) ? 20 : 1;
+
         lookXY.x = Mathf.Clamp(lookXY.x + -look.y, -90, 90);
         lookXY.y += look.x;
 
@@ -131,6 +133,8 @@ public class PlayerController : MonoBehaviour
 
         //Will add a multiplier to speed if the player is holding shift (will be dynamic later)
         adjustedSpeed = PIC.Player.Sprint.IsPressed() && CanSprint() ? moveSpeed * SprintMultiplier : moveSpeed;
+
+        
 
         adjustedSpeed = Crouched ? adjustedSpeed * crouchSpeedMultiplier : adjustedSpeed;
 
@@ -187,17 +191,25 @@ public class PlayerController : MonoBehaviour
             velocity.y = 0;
         }
     }
+    public bool crouchToggle;
     private void CheckInputs()
     {
         
         if (PIC.Player.Crouch.WasPressedThisFrame())
         {
+            if(crouchToggle && Crouched)
+            {
+                Crouch(false);
+                return;
+            }
             Crouch(true);
         }
         if (PIC.Player.Crouch.WasReleasedThisFrame())
         {
+            if (crouchToggle) return;
             Crouch(false);
         }
+        
 
         //Debug
         if (Keyboard.current.rKey.wasPressedThisFrame)
@@ -205,6 +217,22 @@ public class PlayerController : MonoBehaviour
             SceneManager.LoadScene("AnyTest");
         }
 
+    }
+
+    public void OnInteract()
+    {
+        TryInteract();
+    }
+    private void TryInteract()
+    {
+        if (InteractionSystem.s_lastHit.DidHit)
+        {
+            InteractionBase i = InteractionSystem.s_lastHit.Interactable;
+            if (i != null)
+            {
+                i.TryInteract();
+            }
+        }
     }
 
 

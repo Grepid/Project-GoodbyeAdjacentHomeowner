@@ -45,11 +45,6 @@ public class BaseEnemy : MonoBehaviour
         TryChangeState();
         debugText.text = $"State: {state}";
         //Debug stuff
-        //WorkOutSin();
-        /*if (Input.GetKeyDown(KeyCode.L))
-        {
-            counter = 0;
-        }*/
     }
     private bool CanSeePlayer()
     {
@@ -149,13 +144,10 @@ public class BaseEnemy : MonoBehaviour
                 {
                     break;
                 }
-                //transform.Rotate((Vector3.up * 360 / 5f) * Time.deltaTime); 
 
                 Vector3 rot = transform.eulerAngles;
                 rot.y = startingRotFromInvestigation + (90 * Mathf.Sin(Time.time - timeOfStartInvestigation));
-                //print(Time.time - timeOfStartInvestigation);
-                //print((90 * Mathf.Sin(Time.time - timeOfStartInvestigation)));
-                print(Mathf.Sin(Time.time-timeOfStartInvestigation));
+
                 transform.eulerAngles = rot;
 
                 if (Time.time >= timeOfStartInvestigation + 5f)
@@ -246,12 +238,5 @@ public class BaseEnemy : MonoBehaviour
             return;
         }
         ProceedToTask(DesiredTask);
-    }
-    float counter;
-    private void WorkOutSin()
-    {
-        
-        print(Mathf.Sin(counter));
-        counter += Time.deltaTime;
     }
 }
