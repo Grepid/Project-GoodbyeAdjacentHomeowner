@@ -47,40 +47,40 @@ public class SoundDetection : MonoBehaviour
         AddTemporarySuspicionPercent(-TemporarySuspicionLostPerSecond * Time.deltaTime);
 
         //Debug binds
-        /*if (Input.GetKeyDown(KeyCode.Z))
+        if (Keyboard.current.zKey.wasPressedThisFrame)
         {
             AddTemporarySuspicionPercent(10);
         }
-        if (Input.GetKeyDown(KeyCode.C))
+        if (Keyboard.current.cKey.wasPressedThisFrame)
         {
             AddTemporarySuspicionPercent(-10);
         }
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Keyboard.current.eKey.wasPressedThisFrame)
         {
             AddPermanentSuspicionPercent(10);
         }
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (Keyboard.current.qKey.wasPressedThisFrame)
         {
             AddPermanentSuspicionPercent(-10);
         }
 
 
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        if (Keyboard.current.digit1Key.wasPressedThisFrame)
         {
             SetAmbienceLevel(1);
         }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
+        if (Keyboard.current.digit2Key.wasPressedThisFrame)
         {
             SetAmbienceLevel(2);
         }
-        if (Input.GetKeyDown(KeyCode.Alpha3))
+        if (Keyboard.current.digit3Key.wasPressedThisFrame)
         {
             SetAmbienceLevel(3);
         }
-        if (Input.GetKeyDown(KeyCode.Alpha0))
+        if (Keyboard.current.digit0Key.wasPressedThisFrame)
         {
             SetAmbienceLevel(0);
-        }*/
+        }
     }
     bool needsUpdate;
     private void LateUpdate()
