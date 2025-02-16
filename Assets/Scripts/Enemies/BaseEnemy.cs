@@ -75,6 +75,8 @@ public class BaseEnemy : MonoBehaviour
             case EnemyState.Idle:
                 //Maybe use Idle is a transition state where it wants to see what its next priority should be
 
+                agent.speed = walkingSpeed;
+
                 if (PlayerSensed())
                 {
                     break;
@@ -82,14 +84,12 @@ public class BaseEnemy : MonoBehaviour
 
                 if(SoundDetection.instance.ActiveMasks.Count > 0)
                 {
-                    desiredMask = SoundDetection.instance.OrderedMasks[0];
-                    agent.ResetPath();
-                    agent.SetDestination(desiredMask.transform.position);
-                    state = EnemyState.MovingToMask;
+                    
+                    GoToMask();
                     break;
                 }
 
-                ProceedToTask(ChooseRandomTask());
+                TryResumeTask();
 
                 //Do things like check if there is an environmental object on
 
@@ -108,14 +108,12 @@ public class BaseEnemy : MonoBehaviour
 
                 if (SoundDetection.instance.ActiveMasks.Count > 0)
                 {
-                    desiredMask = SoundDetection.instance.OrderedMasks[0];
-                    agent.ResetPath();
-                    agent.SetDestination(desiredMask.transform.position);
-                    state = EnemyState.MovingToMask;
+                    
+                    GoToMask();
                     break;
                 }
 
-                if (agent.hasPath && agent.remainingDistance < 0.5f)
+                if (Vector3.Distance(transform.position, DesiredTask.transform.position) < 1)
                 {
                     DesiredTask.StartTask(this);
                     agent.ResetPath();
@@ -157,7 +155,18 @@ public class BaseEnemy : MonoBehaviour
                 {
                     break;
                 }
-                if (agent.hasPath && agent.remainingDistance < 0.5f)
+
+                if (!desiredMask.isOn)
+                {
+                    investigationPoint = desiredMask.transform.position;
+                    agent.SetDestination(desiredMask.transform.position);
+                    state = EnemyState.MovingToInvestigateNoise;
+                    break;
+                }
+
+                //print($"remaining distance: {agent.remainingDistance}");
+
+                if (Vector3.Distance(transform.position,desiredMask.transform.position) < 1)
                 {
                     desiredMask.SetFixing(true,this);
                     agent.ResetPath();
@@ -197,7 +206,7 @@ public class BaseEnemy : MonoBehaviour
                 {
                     break;
                 }
-                if (agent.remainingDistance < 0.5f)
+                if (Vector3.Distance(transform.position,investigationPoint) < 1)
                 {
                     state = EnemyState.InvestigatingNoise;
                     startingRotFromInvestigation = transform.eulerAngles.y;
@@ -224,7 +233,7 @@ public class BaseEnemy : MonoBehaviour
 
                 if (Time.time >= timeOfStartInvestigation + 5f)
                 {
-                    TryResumeTask();
+                    state = EnemyState.Idle;
                     agent.speed = walkingSpeed;
                 }
                 break;
@@ -243,12 +252,13 @@ public class BaseEnemy : MonoBehaviour
                 }
                 if (!CanSeePlayer())
                 {
-                    state = EnemyState.InvestigatingNoise;
-                    timeOfStartInvestigation = Time.time;
+                    state = EnemyState.MovingToInvestigateNoise;
+                    investigationPoint = Player.Controller.transform.position;
+                    agent.SetDestination(Player.Controller.transform.position);
+                    break;
                 }
                 SoundDetection.instance.AddPermanentSuspicionPercent(50 * Time.deltaTime);
                 break;
-
 
         }
     }
@@ -278,15 +288,16 @@ public class BaseEnemy : MonoBehaviour
     private void PlayerHeard()
     {
         state = EnemyState.MovingToInvestigateNoise;
+        investigationPoint = Player.Controller.transform.position;
         agent.SetDestination(Player.Controller.transform.position);
     }
     
     public void ProceedToTask(Task task)
     {
-        state = EnemyState.MovingToTask;
+        agent.SetDestination(task.transform.position);
         
         DesiredTask = task;
-        agent.SetDestination(task.transform.position);
+        state = EnemyState.MovingToTask;
     }
     public Task ChooseRandomTask()
     {
@@ -305,6 +316,7 @@ public class BaseEnemy : MonoBehaviour
     }
     private void TryResumeTask()
     {
+        if(!potentialTasks.Contains(DesiredTask)) ProceedToTask(ChooseRandomTask());
         if (DesiredTask.completed)
         {
             ProceedToTask(ChooseRandomTask());
@@ -312,10 +324,20 @@ public class BaseEnemy : MonoBehaviour
         }
         ProceedToTask(DesiredTask);
     }
+    Vector3 investigationPoint;
 
     public void FinishedFixingMask()
     {
         state = EnemyState.Idle;
+    }
+
+    public void GoToMask()
+    {
+        agent.speed = investigatingSpeed;
+        desiredMask = SoundDetection.instance.OrderedMasks[0];
+        agent.ResetPath();
+        agent.SetDestination(desiredMask.transform.position);
+        state = EnemyState.MovingToMask;
     }
 
     private void OnCollisionEnter(Collision collision)

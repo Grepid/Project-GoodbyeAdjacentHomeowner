@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class EnvironmentalMask : InteractionBase
 {
-    
+
     public int maskLevel;
     public float fixTime;
     private float alpha;
-    private bool isOn,fixing;
+    public bool isOn { get; private set; }
+    public bool fixing { get; private set; }
     public void SetState(bool value)
     {
         if (isOn == value) return;

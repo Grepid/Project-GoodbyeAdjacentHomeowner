@@ -7,6 +7,8 @@ public class Door : InteractionBase
     [SerializeField]
     private AutoMove moveableCall;
 
+    public float suspicionPercentToAdd;
+
     [SerializeField]
     private DoorKey key;
 
@@ -27,6 +29,7 @@ public class Door : InteractionBase
             TriedToOpenLocked();
             return;
         }
+        SoundDetection.instance?.AddTemporarySuspicionPercent(suspicionPercentToAdd);
         OpenDoor(moveableCall.alpha < 1);
     }
     public void OpenDoor(bool value)
