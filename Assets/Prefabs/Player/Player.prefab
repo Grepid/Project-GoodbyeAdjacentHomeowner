@@ -199,7 +199,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   castableLayers:
     serializedVersion: 2
-    m_Bits: 51
+    m_Bits: 115
   playerCamera: {fileID: 1997608758893310237}
   InteractionRange: 10
 --- !u!1652712579 &7376123921286356999

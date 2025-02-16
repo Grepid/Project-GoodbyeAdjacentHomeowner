@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -14,8 +16,39 @@ public class SoundDetection : MonoBehaviour
     public float TemporarySuspicion { get; private set; }
     public float PermanentSuspicion { get; private set; }
 
-    
-
+    private List<EnvironmentalMask> activeMasks = new List<EnvironmentalMask>();
+    public List<EnvironmentalMask> OrderedMasks
+    {
+        get
+        {
+            if(activeMasks.Count == 0) return new List<EnvironmentalMask>();    
+            return activeMasks.OrderByDescending(m => m.maskLevel).ToList();
+        }
+    }
+    public List<EnvironmentalMask> ActiveMasks => activeMasks;
+    public void AddMask(EnvironmentalMask mask)
+    {
+        activeMasks.Add(mask);
+        UpdateMask();
+    }
+    public void RemoveMask(EnvironmentalMask mask)
+    {
+        if (!activeMasks.Contains(mask)) return;
+        activeMasks.Remove(mask);
+        UpdateMask();
+    }
+    private void UpdateMask()
+    {
+        
+        if(activeMasks.Count == 0)
+        {
+            SetAmbienceLevel(0);
+            return;
+        }
+        int highest = OrderedMasks[0].maskLevel;
+        SetAmbienceLevel(highest);
+        
+    }
     public float AmbienceLevel { get; private set; }
     private float ambienceMultiplier = 1;
     public float TotalSuspicion => TemporarySuspicion + PermanentSuspicion;
@@ -91,6 +124,7 @@ public class SoundDetection : MonoBehaviour
 
     public void SetAmbienceLevel(int level)
     {
+        AmbienceLevel = level;
         switch (level)
         {
             case 0:

@@ -8,7 +8,7 @@ using TMPro;
 
 // TO-DO: MAKE A GOOD DEBUG SYSTEM
 
-public enum EnemyState {Idle,MovingToTask,DoingTask,MovingToInvestigateNoise,InvestigatingNoise,SpottedPlayer}
+public enum EnemyState {Idle,MovingToTask,DoingTask,MovingToInvestigateNoise,InvestigatingNoise,SpottedPlayer,MovingToMask,FixingMask}
 public class BaseEnemy : MonoBehaviour
 {
     // Varibles for enemies
@@ -22,6 +22,7 @@ public class BaseEnemy : MonoBehaviour
     public float walkingSpeed,investigatingSpeed;
     public List<Task> potentialTasks;
     public TextMeshProUGUI debugText;
+    private EnvironmentalMask currentMask, desiredMask;
 
     public EnemyState state { get; private set; }
 
@@ -79,6 +80,17 @@ public class BaseEnemy : MonoBehaviour
                     break;
                 }
 
+                if(SoundDetection.instance.ActiveMasks.Count > 0)
+                {
+                    desiredMask = SoundDetection.instance.OrderedMasks[0];
+                    agent.ResetPath();
+                    agent.SetDestination(desiredMask.transform.position);
+                    state = EnemyState.MovingToMask;
+                    break;
+                }
+
+                ProceedToTask(ChooseRandomTask());
+
                 //Do things like check if there is an environmental object on
 
                 break;
@@ -93,7 +105,17 @@ public class BaseEnemy : MonoBehaviour
                 {
                     break;
                 }
-                if(agent.hasPath && agent.remainingDistance < 0.5f)
+
+                if (SoundDetection.instance.ActiveMasks.Count > 0)
+                {
+                    desiredMask = SoundDetection.instance.OrderedMasks[0];
+                    agent.ResetPath();
+                    agent.SetDestination(desiredMask.transform.position);
+                    state = EnemyState.MovingToMask;
+                    break;
+                }
+
+                if (agent.hasPath && agent.remainingDistance < 0.5f)
                 {
                     DesiredTask.StartTask(this);
                     agent.ResetPath();
@@ -120,6 +142,51 @@ public class BaseEnemy : MonoBehaviour
                     break;
                 }
                 break;
+
+
+
+
+
+            case EnemyState.MovingToMask:
+                //if sees player break
+                //if gets to task break and call task 
+                //if noise is over threshold investigate
+
+
+                if (PlayerSensed())
+                {
+                    break;
+                }
+                if (agent.hasPath && agent.remainingDistance < 0.5f)
+                {
+                    desiredMask.SetFixing(true,this);
+                    agent.ResetPath();
+                    currentMask = desiredMask;
+                    state = EnemyState.FixingMask;
+                    break;
+                }
+                break;
+
+            ///
+            /// Doing Task
+            ///
+            case EnemyState.FixingMask:
+                //if sees player break
+                //if noise is over threshold investigate
+                //get the called task to call complete in here when completed
+                //if breaks early from task, call task stopped or something
+
+
+                if (PlayerSensed())
+                {
+                    currentMask.SetFixing(false,this);
+                    currentMask = null;
+                    break;
+                }
+                break;
+
+
+
 
             case EnemyState.MovingToInvestigateNoise:
                 //if sees player break
@@ -233,7 +300,8 @@ public class BaseEnemy : MonoBehaviour
     {
         currentTask.ResetTask();
         potentialTasks.Remove(currentTask);
-        ProceedToTask(ChooseRandomTask());
+        state = EnemyState.Idle;
+        //ProceedToTask(ChooseRandomTask());
     }
     private void TryResumeTask()
     {
@@ -244,6 +312,12 @@ public class BaseEnemy : MonoBehaviour
         }
         ProceedToTask(DesiredTask);
     }
+
+    public void FinishedFixingMask()
+    {
+        state = EnemyState.Idle;
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
         Door door = collision.gameObject.GetComponent<Door>();

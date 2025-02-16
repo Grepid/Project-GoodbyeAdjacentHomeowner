@@ -217,7 +217,11 @@ public class PlayerController : MonoBehaviour
         {
             SceneManager.LoadScene("AnyTest");
         }
-
+        
+        if (Keyboard.current.pKey.wasPressedThisFrame)
+        {
+            print($"Current Ambience set to: {SoundDetection.instance.AmbienceLevel}");
+        }
     }
 
     public void OnInteract()
