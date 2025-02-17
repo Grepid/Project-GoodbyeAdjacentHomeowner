@@ -7,6 +7,10 @@ public class WindowTraversal : InteractionBase
     public GameObject side1, side2;
     protected override void OnInteract()
     {
+        
+    }
+    public void Traverse()
+    {
         Player.Controller.TPPlayer(oppositePoint());
     }
     private Vector3 oppositePoint()

@@ -237,10 +237,12 @@ public class PlayerController : MonoBehaviour
             if (i != null)
             {
                 i.TryInteract();
+                WindowTraversal win = i.GetComponent<WindowTraversal>();
+                window = win;
             }
         }
     }
-
+    private WindowTraversal window;
 
     private void OnJump()
     {
@@ -288,7 +290,10 @@ public class PlayerController : MonoBehaviour
 
     public void OnTraverse()
     {
-        print("Moved through");
+        if(window != null)
+        {
+            window.Traverse();
+        }
     }
 
     private IEnumerator WaitForUncrouch()
