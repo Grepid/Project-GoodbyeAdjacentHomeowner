@@ -5529,7 +5529,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   agent: {fileID: 1365260766}
   FOV: 90
-  detectionDistance: 0
+  detectionDistance: 10
   walkingSpeed: 3.5
   investigatingSpeed: 2
   potentialTasks: []

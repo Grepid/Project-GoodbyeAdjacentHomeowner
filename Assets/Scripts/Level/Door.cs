@@ -7,7 +7,7 @@ public class Door : InteractionBase
     [SerializeField]
     private AutoMove moveableCall;
 
-    public float suspicionPercentToAdd;
+    public float suspicionPercentToAdd = 10;
 
     [SerializeField]
     private DoorKey key;

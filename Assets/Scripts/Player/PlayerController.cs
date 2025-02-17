@@ -104,7 +104,7 @@ public class PlayerController : MonoBehaviour
         float sus = susPerSecond;
         //if (Crouched) sus *= crouchSpeedMultiplier;
         if (Crouched) sus *= 0;
-        //if (Input.GetKey(KeyCode.LeftShift)) sus *= SprintMultiplier;
+        if (PIC.Player.Sprint.IsPressed()) sus *= SprintMultiplier;
         SoundDetection.instance?.AddTemporarySuspicionPercent(sus * IA_Movement.ReadValue<Vector2>().magnitude * Time.deltaTime);
     }
     private void LateUpdate()
