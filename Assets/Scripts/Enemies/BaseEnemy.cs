@@ -58,7 +58,7 @@ public class BaseEnemy : MonoBehaviour
         float angle = Vector3.Angle(transform.forward, direction);
         if(angle <= (FOV / 2f) && Vector3.Distance(Player.Controller.transform.position,transform.position) <= detectionDistance)
         {
-            if(Physics.Raycast(transform.position,direction,out RaycastHit hit))
+            if(Physics.Raycast(transform.position,direction,out RaycastHit hit,99,255,QueryTriggerInteraction.Ignore))
             {
                 if(hit.collider.gameObject == Player.Controller.gameObject)
                 {
@@ -210,7 +210,8 @@ public class BaseEnemy : MonoBehaviour
                 {
                     break;
                 }
-                if (Vector3.Distance(transform.position,investigationPoint) < 1)
+                //|| agent.remainingDistance <= 0.5f
+                if (Vector3.Distance(transform.position,investigationPoint) < 1 || (agent.remainingDistance < 1 && agent.pathStatus == NavMeshPathStatus.PathPartial))
                 {
                     state = EnemyState.Investigating;
                     startingRotFromInvestigation = transform.eulerAngles.y;

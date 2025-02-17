@@ -2,15 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LevelController : MonoBehaviour
+public class LevelController : ControllerBase
 {
     public static LevelController Instance;
     public Transform TaskHolder;
     public List<Task> Tasks;
     private void Awake()
     {
-        Instance = this;
-        AssignTasks();
+        
     }
     private void AssignTasks()
     {
@@ -20,5 +19,11 @@ public class LevelController : MonoBehaviour
             if (t == null) continue;
             Tasks.Add(task);
         }
+    }
+
+    public override void Initialise()
+    {
+        Instance = this;
+        AssignTasks();
     }
 }

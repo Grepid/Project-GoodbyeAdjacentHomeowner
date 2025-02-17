@@ -117,6 +117,7 @@ public class PlayerController : MonoBehaviour
         Vector2 look = IA_Look.ReadValue<Vector2>();
 
         look *= Time.smoothDeltaTime;
+        //look *= Time.deltaTime;
 
         look.x *= PlayerIn.currentControlScheme == PIC.KeyboardMouseScheme.name? mouseSens.x : gamepadSens.x;
         look.y *= PlayerIn.currentControlScheme == PIC.KeyboardMouseScheme.name ? mouseSens.y : gamepadSens.y;
