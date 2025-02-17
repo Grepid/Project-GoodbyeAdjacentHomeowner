@@ -6,7 +6,7 @@ using UnityEngine.Events;
 public class AutoMove : MonoBehaviour
 {
     public bool active { get; private set; }
-    public List<MoveableObject> linkedObjects;
+    public List<MoveableObject> linkedObjects = new List<MoveableObject>();
     public float pullTime;
     float usingTime;
     public float alpha { get; private set; }
