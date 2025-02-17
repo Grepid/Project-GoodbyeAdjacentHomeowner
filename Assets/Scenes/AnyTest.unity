@@ -1409,12 +1409,16 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 319629074}
     - target: {fileID: 5062597353463020753, guid: 10dfff3f0f4e59948a885cc38f8c9020, type: 3}
+      propertyPath: susPerSecond
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5062597353463020753, guid: 10dfff3f0f4e59948a885cc38f8c9020, type: 3}
       propertyPath: gamepadSens.x
-      value: 400
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 5062597353463020753, guid: 10dfff3f0f4e59948a885cc38f8c9020, type: 3}
       propertyPath: gamepadSens.y
-      value: 400
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 5965162382612985480, guid: 10dfff3f0f4e59948a885cc38f8c9020, type: 3}
       propertyPath: m_Carve
@@ -5525,7 +5529,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   agent: {fileID: 1365260766}
   FOV: 90
-  detectionDistance: 10
+  detectionDistance: 0
   walkingSpeed: 3.5
   investigatingSpeed: 2
   potentialTasks: []
@@ -8628,7 +8632,7 @@ MonoBehaviour:
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1920, y: 1080}
-  m_ScreenMatchMode: 0
+  m_ScreenMatchMode: 1
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96

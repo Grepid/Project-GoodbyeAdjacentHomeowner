@@ -285,6 +285,11 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    public void OnTraverse()
+    {
+        print("Moved through");
+    }
+
     private IEnumerator WaitForUncrouch()
     {
         while (true)

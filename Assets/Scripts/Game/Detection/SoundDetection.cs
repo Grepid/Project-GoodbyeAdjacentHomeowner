@@ -88,31 +88,13 @@ public class SoundDetection : MonoBehaviour
         {
             AddTemporarySuspicionPercent(-10);
         }
-        if (Keyboard.current.eKey.wasPressedThisFrame)
+        if (Keyboard.current.lKey.wasPressedThisFrame)
         {
             AddPermanentSuspicionPercent(10);
         }
-        if (Keyboard.current.qKey.wasPressedThisFrame)
+        if (Keyboard.current.kKey.wasPressedThisFrame)
         {
             AddPermanentSuspicionPercent(-10);
-        }
-
-
-        if (Keyboard.current.digit1Key.wasPressedThisFrame)
-        {
-            SetAmbienceLevel(1);
-        }
-        if (Keyboard.current.digit2Key.wasPressedThisFrame)
-        {
-            SetAmbienceLevel(2);
-        }
-        if (Keyboard.current.digit3Key.wasPressedThisFrame)
-        {
-            SetAmbienceLevel(3);
-        }
-        if (Keyboard.current.digit0Key.wasPressedThisFrame)
-        {
-            SetAmbienceLevel(0);
         }
     }
     bool needsUpdate;
@@ -147,7 +129,9 @@ public class SoundDetection : MonoBehaviour
 
     public void AddTemporarySuspicionPercent(float level)
     {
-        TemporarySuspicion = Mathf.Clamp(TemporarySuspicion + ((level / 100) * ambienceMultiplier), 0, 1-PermanentSuspicion);
+        float multiplier = ambienceMultiplier;
+        if(level < 0) multiplier = 1;
+        TemporarySuspicion = Mathf.Clamp(TemporarySuspicion + ((level / 100) * multiplier), 0, 1-PermanentSuspicion);
         //UpdateSoundBar();
         needsUpdate = true;
     }

@@ -8,7 +8,7 @@ using TMPro;
 
 // TO-DO: MAKE A GOOD DEBUG SYSTEM
 
-public enum EnemyState {Idle,MovingToTask,DoingTask,MovingToInvestigateNoise,InvestigatingNoise,SpottedPlayer,MovingToMask,FixingMask}
+public enum EnemyState {Idle,MovingToTask,DoingTask,MovingToInvestigate,Investigating,SpottedPlayer,MovingToMask,FixingMask}
 public class BaseEnemy : MonoBehaviour
 {
     // Varibles for enemies
@@ -160,11 +160,10 @@ public class BaseEnemy : MonoBehaviour
                 {
                     investigationPoint = desiredMask.transform.position;
                     agent.SetDestination(desiredMask.transform.position);
-                    state = EnemyState.MovingToInvestigateNoise;
+                    state = EnemyState.MovingToInvestigate;
                     break;
                 }
 
-                //print($"remaining distance: {agent.remainingDistance}");
 
                 if (Vector3.Distance(transform.position,desiredMask.transform.position) < 1)
                 {
@@ -192,12 +191,17 @@ public class BaseEnemy : MonoBehaviour
                     currentMask = null;
                     break;
                 }
+                if (!desiredMask.isOn)
+                {
+                    state = EnemyState.Idle;
+                    break;
+                }
                 break;
 
 
 
 
-            case EnemyState.MovingToInvestigateNoise:
+            case EnemyState.MovingToInvestigate:
                 //if sees player break
                 //if get to area, start investigating noise itself (looking around and stuff)
 
@@ -208,7 +212,7 @@ public class BaseEnemy : MonoBehaviour
                 }
                 if (Vector3.Distance(transform.position,investigationPoint) < 1)
                 {
-                    state = EnemyState.InvestigatingNoise;
+                    state = EnemyState.Investigating;
                     startingRotFromInvestigation = transform.eulerAngles.y;
                     timeOfStartInvestigation = Time.time;
                     break;
@@ -216,7 +220,7 @@ public class BaseEnemy : MonoBehaviour
 
                 break;
 
-            case EnemyState.InvestigatingNoise:
+            case EnemyState.Investigating:
                 //if sees player break
                 //looks around for x seconds then gets back to task if it wasnt complete, or else go to a new task
 
@@ -252,7 +256,7 @@ public class BaseEnemy : MonoBehaviour
                 }
                 if (!CanSeePlayer())
                 {
-                    state = EnemyState.MovingToInvestigateNoise;
+                    state = EnemyState.MovingToInvestigate;
                     investigationPoint = Player.Controller.transform.position;
                     agent.SetDestination(Player.Controller.transform.position);
                     break;
@@ -287,9 +291,16 @@ public class BaseEnemy : MonoBehaviour
     }
     private void PlayerHeard()
     {
-        state = EnemyState.MovingToInvestigateNoise;
+        state = EnemyState.MovingToInvestigate;
         investigationPoint = Player.Controller.transform.position;
         agent.SetDestination(Player.Controller.transform.position);
+    }
+
+    private void InvestigateArea(Vector3 location)
+    {
+        investigationPoint = location;
+        agent.SetDestination(investigationPoint);
+        state = EnemyState.MovingToInvestigate;
     }
     
     public void ProceedToTask(Task task)

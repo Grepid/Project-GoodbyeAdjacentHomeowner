@@ -21,6 +21,8 @@ public class EnvironmentalMask : InteractionBase
         else
         {
             SoundDetection.instance.RemoveMask(this);
+            fixing = false;
+            alpha = 0;  
         }
 
                 
@@ -33,6 +35,7 @@ public class EnvironmentalMask : InteractionBase
         {
             SetState(false);
             theguy.FinishedFixingMask();
+            fixing = false;
             alpha = 0;
         }
         alpha += Time.deltaTime / fixTime;
