@@ -339,6 +339,11 @@ public class PlayerController : MonoBehaviour
         if (value) PIC.Enable();
         else PIC.Disable();
     }
-
+    public void TPPlayer(Vector3 pos)
+    {
+        cc.enabled = false;
+        transform.position = pos;
+        cc.enabled = true;
+    }
 }
 
