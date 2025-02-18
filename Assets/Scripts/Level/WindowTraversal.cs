@@ -2,9 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
 public class WindowTraversal : InteractionBase
 {
     public GameObject side1, side2;
+    public float SuspicionPercentPerTraverse = 5f;
     protected override void OnInteract()
     {
         
@@ -12,6 +15,7 @@ public class WindowTraversal : InteractionBase
     public void Traverse()
     {
         Player.Controller.TPPlayer(oppositePoint());
+        SoundDetection.instance?.AddTemporarySuspicionPercent(SuspicionPercentPerTraverse);
     }
     private Vector3 oppositePoint()
     {

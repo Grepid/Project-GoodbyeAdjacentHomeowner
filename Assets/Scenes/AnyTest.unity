@@ -1762,22 +1762,6 @@ PrefabInstance:
       propertyPath: testInput
       value: 
       objectReference: {fileID: 319629074}
-    - target: {fileID: 5062597353463020753, guid: 10dfff3f0f4e59948a885cc38f8c9020, type: 3}
-      propertyPath: susPerSecond
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 5062597353463020753, guid: 10dfff3f0f4e59948a885cc38f8c9020, type: 3}
-      propertyPath: gamepadSens.x
-      value: 300
-      objectReference: {fileID: 0}
-    - target: {fileID: 5062597353463020753, guid: 10dfff3f0f4e59948a885cc38f8c9020, type: 3}
-      propertyPath: gamepadSens.y
-      value: 300
-      objectReference: {fileID: 0}
-    - target: {fileID: 5965162382612985480, guid: 10dfff3f0f4e59948a885cc38f8c9020, type: 3}
-      propertyPath: m_Carve
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6374,6 +6358,7 @@ MonoBehaviour:
   canInteract: 1
   side1: {fileID: 2101691559}
   side2: {fileID: 1788815326}
+  SuspicionPercentPerTraverse: 5
 --- !u!65 &1322288893
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6897,6 +6882,7 @@ MonoBehaviour:
   canInteract: 1
   side1: {fileID: 1146467841}
   side2: {fileID: 1907648824}
+  SuspicionPercentPerTraverse: 5
 --- !u!65 &1388551040
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8041,6 +8027,7 @@ MonoBehaviour:
   canInteract: 1
   side1: {fileID: 925889970}
   side2: {fileID: 605914936}
+  SuspicionPercentPerTraverse: 5
 --- !u!65 &1620639631
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -10347,6 +10334,7 @@ MonoBehaviour:
   canInteract: 1
   side1: {fileID: 2028456192}
   side2: {fileID: 466101397}
+  SuspicionPercentPerTraverse: 5
 --- !u!1001 &2074427098
 PrefabInstance:
   m_ObjectHideFlags: 0

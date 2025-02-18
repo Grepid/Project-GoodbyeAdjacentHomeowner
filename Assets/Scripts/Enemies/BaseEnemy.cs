@@ -45,12 +45,17 @@ public class BaseEnemy : MonoBehaviour
 
         init = true;
     }
-    
+    Vector3 lastpos;
     public void Update()
     {
         TryChangeState();
+
         debugText.text = $"State: {state}";
         //Debug stuff
+    }
+    private void LateUpdate()
+    {
+        lastpos = transform.position;
     }
     private bool CanSeePlayer()
     {
@@ -68,6 +73,7 @@ public class BaseEnemy : MonoBehaviour
         }
         return false;
     }
+    private float losTimeOnPlayer;
     private void TryChangeState()
     {
         switch (state)
@@ -116,7 +122,7 @@ public class BaseEnemy : MonoBehaviour
                 if (Vector3.Distance(transform.position, DesiredTask.transform.position) < 1)
                 {
                     DesiredTask.StartTask(this);
-                    agent.ResetPath();
+                    //agent.ResetPath();
                     currentTask = DesiredTask;
                     state = EnemyState.DoingTask;
                     break;
@@ -163,12 +169,13 @@ public class BaseEnemy : MonoBehaviour
                     state = EnemyState.MovingToInvestigate;
                     break;
                 }
-
-
-                if (Vector3.Distance(transform.position,desiredMask.transform.position) < 1)
+                Collider col = desiredMask.GetComponent<Collider>();
+                print(Vector3.Distance(transform.position, col.ClosestPointOnBounds(transform.position)));
+                if(Vector3.Distance(transform.position,col.ClosestPointOnBounds(transform.position)) < 1)
+                //if (Vector3.Distance(transform.position,desiredMask.transform.position) < 1)
                 {
                     desiredMask.SetFixing(true,this);
-                    agent.ResetPath();
+                    //agent.ResetPath();
                     currentMask = desiredMask;
                     state = EnemyState.FixingMask;
                     break;
@@ -248,7 +255,7 @@ public class BaseEnemy : MonoBehaviour
                 //adds x permanent sus per second when spotted
                 //if permanent sus is over y then plays game over cutscene
 
-
+                transform.LookAt(Player.Controller.transform.position);
                 if (SoundDetection.instance.IsTaggedAndCursed)
                 {
                     agent.ResetPath();
@@ -273,9 +280,17 @@ public class BaseEnemy : MonoBehaviour
     {
         if (CanSeePlayer())
         {
-            PlayerSeen();
-            agent.speed = walkingSpeed;
-            return true;
+            losTimeOnPlayer += Time.deltaTime;
+            if(losTimeOnPlayer >= 0.25f)
+            {
+                PlayerSeen();
+                agent.speed = walkingSpeed;
+                return true;
+            }
+        }
+        else
+        {
+            losTimeOnPlayer = Mathf.Clamp01(losTimeOnPlayer -= Time.deltaTime);
         }
         if (SoundDetection.instance.IsDetected)
         {
@@ -287,6 +302,7 @@ public class BaseEnemy : MonoBehaviour
     }
     private void PlayerSeen()
     {
+        transform.LookAt(Player.Controller.transform.position);
         state = EnemyState.SpottedPlayer;
         agent.SetDestination(Player.Controller.transform.position);
     }

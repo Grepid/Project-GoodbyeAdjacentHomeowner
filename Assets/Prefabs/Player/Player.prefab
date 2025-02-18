@@ -173,7 +173,7 @@ MonoBehaviour:
   camArm: {fileID: 604464240333727441}
   moveSpeed: 5
   mouseSens: {x: 10, y: 10}
-  gamepadSens: {x: 200, y: 200}
+  gamepadSens: {x: 300, y: 300}
   crouchHeight: 1
   crouchSpeedMultiplier: 0.5
   startingSprintMultiplier: 1.5
@@ -181,7 +181,7 @@ MonoBehaviour:
   JumpStrength: 4
   ExtraJumpStrength: 1.5
   AllowedJumps: 1
-  susPerSecond: 5
+  susPerSecond: 10
   canSprint: 1
   PlayerIn: {fileID: 3314617355049486039}
   crouchToggle: 1

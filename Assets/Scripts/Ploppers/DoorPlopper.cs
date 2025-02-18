@@ -37,6 +37,8 @@ public class DoorPlopper : MonoBehaviour
         d.SetCanInteract(true);
         d.suspicionPercentToAdd = susToAddWhenInteracted;
 
+        door.layer = 6;
+
         DestroyImmediate(this);
     }
     
