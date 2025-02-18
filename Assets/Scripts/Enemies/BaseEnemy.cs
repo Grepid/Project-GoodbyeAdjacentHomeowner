@@ -5,6 +5,7 @@ using UnityEngine.AI;
 using Grepid.BetterRandom;
 using System.Linq;
 using TMPro;
+using AudioSystem;
 
 // TO-DO: MAKE A GOOD DEBUG SYSTEM
 
@@ -35,6 +36,7 @@ public class BaseEnemy : MonoBehaviour
     {
         ProceedToTask(ChooseRandomTask());
         agent.speed = walkingSpeed;
+        AudioManager.Play("TestKings",gameObject,true);
     }
     bool init;
     private void OnEnable()
@@ -169,8 +171,14 @@ public class BaseEnemy : MonoBehaviour
                     state = EnemyState.MovingToInvestigate;
                     break;
                 }
+
+                if (SoundDetection.instance.OrderedMasks[0].maskLevel > desiredMask.maskLevel)
+                {
+                    GoToMask();
+                }
+
                 Collider col = desiredMask.GetComponent<Collider>();
-                print(Vector3.Distance(transform.position, col.ClosestPointOnBounds(transform.position)));
+                //print(Vector3.Distance(transform.position, col.ClosestPointOnBounds(transform.position)));
                 if(Vector3.Distance(transform.position,col.ClosestPointOnBounds(transform.position)) < 1)
                 //if (Vector3.Distance(transform.position,desiredMask.transform.position) < 1)
                 {
