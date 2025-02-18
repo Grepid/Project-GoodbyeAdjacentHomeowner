@@ -26,7 +26,7 @@ public class WindowPlopper : MonoBehaviour
         travCol.size = testCol1.size;
         
         traversalZone.transform.localPosition += (Vector3.up * (travCol.size.y / 2));
-        traversalZone.transform.localPosition += Vector3.forward * -0.05f;
+        traversalZone.transform.localPosition += Vector3.forward * -0.01f;
         WindowTraversal win = traversalZone.AddComponent<WindowTraversal>();
         GameObject point1 = new GameObject("traversalPoint1");
         GameObject point2 = new GameObject("traversalPoint2");
