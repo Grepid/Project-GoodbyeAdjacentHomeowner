@@ -18,6 +18,7 @@ public class WindowPlopper : MonoBehaviour
         GameObject traversalZone = new GameObject("TraversalZone");
         traversalZone.transform.parent = parent.transform;
         traversalZone.transform.localPosition = transform.localPosition;
+        traversalZone.transform.rotation = transform.rotation;
         BoxCollider travCol = traversalZone.AddComponent<BoxCollider>();
         MeshCollider mc = GetComponent<MeshCollider>();
         mc.enabled = false;
