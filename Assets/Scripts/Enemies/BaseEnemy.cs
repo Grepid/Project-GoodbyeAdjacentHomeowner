@@ -300,8 +300,18 @@ public class BaseEnemy : MonoBehaviour
         {
             losTimeOnPlayer = Mathf.Clamp01(losTimeOnPlayer -= Time.deltaTime);
         }
+        
         if (SoundDetection.instance.IsDetected)
         {
+            bool navEdge = NavMesh.SamplePosition(Player.Controller.transform.position, out NavMeshHit hit, 0.25f, 1);
+            if (navEdge)
+            {
+                if(hit.distance > 0.1f)
+                {
+                    
+                }
+                print("Found nearby nav");
+            }
             PlayerHeard();
             agent.speed = investigatingSpeed;
             return true;
