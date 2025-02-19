@@ -33,8 +33,9 @@ namespace AudioSystem
 
         private void Update()
         {
-            if (!AudioSource || !AudioSource.clip){ Stop(); return; }
-            if(AudioSource.time >= AudioSource.clip.length && !SoundClass.loop)
+            if (!AudioSource) return;
+            if (!AudioSource.clip) return;
+            if (AudioSource.time >= AudioSource.clip.length && !SoundClass.loop)
             {
                 foreach(KeyValuePair<MonoBehaviour, string> pair in bindActions)
                 {

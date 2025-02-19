@@ -200,34 +200,6 @@ namespace AudioSystem
             if (!FullValidCheck) return null;
             //AudioPlayer result = soundSources.Find(s => (s != null && (s.AudioSource.clip == null || !s.isPlaying) && !s.wasPausedByESC));
             AudioPlayer result = soundSources.Find(s => !s.AudioSource.isPlaying  && !s.wasPausedByESC);
-            
-            /*if (result != null)
-            {
-                //print($"Lambda found {result.name} where isPlaying was {result.AudioSource.isPlaying} and wasPausedByEsc was {result.wasPausedByESC}");
-                if(result.AudioSource.isPlaying)
-                {
-                    result = null;
-                }
-                if (result.wasPausedByESC)
-                {
-                    result = null;
-                }
-            }*/
-
-            
-            /*result = null;
-            foreach(AudioPlayer p in soundSources)
-            {
-                if (p.AudioSource.isPlaying) continue;
-                if (p.wasPausedByESC) continue;
-
-                result = p;
-                print($"Foreach found {result.name} where isPlaying was {result.AudioSource.isPlaying} and wasPausedByEsc was {result.wasPausedByESC}");
-                break;
-            }
-            Debug.Break();*/
-
-
 
             if (result == null)
             {
@@ -368,10 +340,6 @@ namespace AudioSystem
             AudioSource audSource = focus.AudioSource;
             AdjustAudioSource(audSource, s);
             focus.Initialise(audSource, s);
-
-
-
-            audSource.volume = SoundTypeVolume(s.type);
 
             audSource.Play();
 
