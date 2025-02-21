@@ -246,14 +246,19 @@ public class PlayerController : MonoBehaviour
             if (i != null)
             {
                 i.TryInteract();
-                return;
             }
-            
-            //Checks if the hit object is a Window Traversal Zone to register it
-            WindowTraversal win = h.GetComponent<WindowTraversal>();
-            window = win;
+            else
+            {
+                //Checks if the hit object is a Window Traversal Zone to register it
+                WindowTraversal win = h.GetComponent<WindowTraversal>();
+                window = win;
+            }
         }
-        window = null;
+        else
+        {
+            window = null;
+        }
+        
     }
     private WindowTraversal window;
 

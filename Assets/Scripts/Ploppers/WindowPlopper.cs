@@ -50,7 +50,7 @@ public class WindowPlopper : MonoBehaviour
 
             win.side1 = point1;
             win.side2 = point2;
-            win.SetCanInteract(true);
+            //win.SetCanInteract(true);
 
             mov.hookMode = new MoveableObject.HookMode[1];
             mov.hookMode[0] = MoveableObject.HookMode.Move;

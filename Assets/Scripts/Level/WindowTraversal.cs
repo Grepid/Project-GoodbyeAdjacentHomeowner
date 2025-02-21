@@ -4,14 +4,10 @@ using UnityEngine;
 
 
 
-public class WindowTraversal : InteractionBase
+public class WindowTraversal : MonoBehaviour
 {
     public GameObject side1, side2;
     public float SuspicionPercentPerTraverse = 5f;
-    protected override void OnInteract()
-    {
-        
-    }
     public void Traverse()
     {
         Player.Controller.TPPlayer(oppositePoint());
