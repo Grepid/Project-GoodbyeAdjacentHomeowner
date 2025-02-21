@@ -153,7 +153,7 @@ public class PlayerController : MonoBehaviour
     {
         if (!isCheckingForGround) return;
 
-        var hits = Physics.OverlapSphere(transform.position + Vector3.down, 0.25f, 255, QueryTriggerInteraction.Ignore);
+        var hits = Physics.OverlapSphere(transform.position, 0.1f, 255, QueryTriggerInteraction.Ignore);
         //Counts hits that isn't the player
         int notPlayer = 0;
         foreach (var hit in hits)
@@ -211,6 +211,10 @@ public class PlayerController : MonoBehaviour
             if (crouchToggle) return;
             Crouch(false);
         }
+        if (PIC.Player.Jump.IsPressed())
+        {
+            Jump();
+        }
         
 
         //Debug
@@ -231,16 +235,24 @@ public class PlayerController : MonoBehaviour
     }
     private void TryInteract()
     {
-        if (InteractionSystem.s_lastHit.DidHit)
+        //If Interaction system hit an object
+        if (InteractionSystem.s_lastHit.collider != null)
         {
-            InteractionBase i = InteractionSystem.s_lastHit.Interactable;
+            var h = InteractionSystem.s_lastHit.collider.gameObject;
+
+            //Grab then try interact with an interactable
+            InteractionBase i = InteractionSystem.s_lastHit.collider.GetComponent<InteractionBase>();
             if (i != null)
             {
                 i.TryInteract();
-                WindowTraversal win = i.GetComponent<WindowTraversal>();
-                window = win;
+                return;
             }
+            
+            //Checks if the hit object is a Window Traversal Zone to register it
+            WindowTraversal win = h.GetComponent<WindowTraversal>();
+            window = win;
         }
+        window = null;
     }
     private WindowTraversal window;
 
