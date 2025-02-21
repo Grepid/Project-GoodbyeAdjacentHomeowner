@@ -61,6 +61,7 @@ public class PlayerController : MonoBehaviour
     public bool isGrounded { get; private set; }
     public bool canSprint;
     public PlayerInput PlayerIn;
+    public Vector3 center => transform.position + cc.center;
     private void Awake()
     {
         Player.SetController(this);

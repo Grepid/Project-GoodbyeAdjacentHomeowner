@@ -61,9 +61,9 @@ public class BaseEnemy : MonoBehaviour
     }
     private bool CanSeePlayer()
     {
-        Vector3 direction = (Player.Controller.transform.position - transform.position).normalized;
+        Vector3 direction = (Player.Controller.center - transform.position).normalized;
         float angle = Vector3.Angle(transform.forward, direction);
-        if(angle <= (FOV / 2f) && Vector3.Distance(Player.Controller.transform.position,transform.position) <= detectionDistance)
+        if(angle <= (FOV / 2f) && Vector3.Distance(Player.Controller.center,transform.position) <= detectionDistance)
         {
             if(Physics.Raycast(transform.position,direction,out RaycastHit hit,99,255,QueryTriggerInteraction.Ignore))
             {
@@ -217,15 +217,11 @@ public class BaseEnemy : MonoBehaviour
 
 
             case EnemyState.MovingToInvestigate:
-                //if sees player break
-                //if get to area, start investigating noise itself (looking around and stuff)
-
-
                 if (PlayerSensed())
                 {
                     break;
                 }
-                //|| agent.remainingDistance <= 0.5f
+
                 if (Vector3.Distance(transform.position,investigationPoint) < 1 || (agent.remainingDistance < 1 && agent.pathStatus == NavMeshPathStatus.PathPartial))
                 {
                     state = EnemyState.Investigating;
@@ -335,6 +331,7 @@ public class BaseEnemy : MonoBehaviour
     {
         investigationPoint = location;
         agent.SetDestination(investigationPoint);
+        agent.speed = investigatingSpeed;
         state = EnemyState.MovingToInvestigate;
     }
     
