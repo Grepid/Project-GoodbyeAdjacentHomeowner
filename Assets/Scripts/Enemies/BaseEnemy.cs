@@ -6,6 +6,7 @@ using Grepid.BetterRandom;
 using System.Linq;
 using TMPro;
 using AudioSystem;
+using Adjacent;
 
 // TO-DO: MAKE A GOOD DEBUG SYSTEM
 
