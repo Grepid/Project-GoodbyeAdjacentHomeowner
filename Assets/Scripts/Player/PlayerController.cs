@@ -7,8 +7,10 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using Adjacent;
+using Unity.Netcode;
+using QFSW.QC;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : NetworkBehaviour
 {
     [SerializeField]
     private CharacterController cc;
@@ -62,35 +64,87 @@ public class PlayerController : MonoBehaviour
     public bool isGrounded { get; private set; }
     public bool canSprint;
     public PlayerInput PlayerIn;
+    public Camera playerCam;
     public Vector3 center => transform.position + cc.center;
-    private void Awake()
+    /*private void Awake()
     {
+        if (!IsOwner)
+        {
+            playerCam.gameObject.SetActive(false);
+            //return;
+        }
+
         Player.SetController(this);
-        this.PIC = new PlayerInputControls();
+        PIC = new PlayerInputControls();
+        PIC.Enable();
+        SetSprintMultiplier(startingSprintMultiplier);
+        standHeight = cc.height;
+        currentJumps = AllowedJumps;
+    }*/
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+        if (!IsOwner)
+        {
+            playerCam.gameObject.SetActive(false);
+            return;
+        }
+
+        Player.SetController(this);
+        PIC = new PlayerInputControls();
+        PIC.Enable();
         SetSprintMultiplier(startingSprintMultiplier);
         standHeight = cc.height;
         currentJumps = AllowedJumps;
     }
-    private void OnEnable()
+    public override void OnNetworkDespawn()
     {
-        PIC.Enable();
+        base.OnNetworkDespawn();
 
-        IA_Movement = PIC.Player.Move;
-
-        IA_Look = PIC.Player.Look;
     }
+
+    [Command]
+    private void DescribeRelations()
+    {
+        if (IsOwner)
+        {
+            print($"Function ran by Owner {base.NetworkObject.OwnerClientId}");
+        }
+        else
+        {
+            print($"Function failed to run from non-owner {base.NetworkObject.OwnerClientId}");
+        }
+    }
+
+
+    /*private void OnEnable()
+    {
+        if (IsOwner)
+        {
+            print($"Awake ran on Owner {base.NetworkObject.OwnerClientId}");
+        }
+        else
+        {
+            print($"Awake ran and failed on non-owner {base.NetworkObject.OwnerClientId}");
+        }
+
+        PIC.Enable();
+    }*/
     private void OnDisable()
     {
+        if (!IsOwner) return;
         PIC.Disable();
     }
 
     private void Start()
     {
+        if (!IsOwner) return;
         SetCursor(false);
     }
 
     private void FixedUpdate()
     {
+        if (!IsOwner) return;
         CheckGrounded();
     }
     
@@ -98,6 +152,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!IsOwner) return;
         if (!controlling) return;
         AssignVariables();
         MovementUpdate();
@@ -107,16 +162,18 @@ public class PlayerController : MonoBehaviour
         //if (Crouched) sus *= crouchSpeedMultiplier;
         if (Crouched) sus *= 0;
         if (PIC.Player.Sprint.IsPressed()) sus *= SprintMultiplier;
-        SoundDetection.instance?.AddTemporarySuspicionPercent(sus * IA_Movement.ReadValue<Vector2>().magnitude * Time.deltaTime);
+        SoundDetection.instance?.AddTemporarySuspicionPercent(sus * PIC.Player.Move.ReadValue<Vector2>().magnitude * Time.deltaTime);
     }
     private void LateUpdate()
     {
+        if (!IsOwner) return;
         CameraUpdate();
         lastPos = transform.position;
     }
     private void AssignVariables()
     {
-        Vector2 look = IA_Look.ReadValue<Vector2>();
+        if (!IsOwner) return;
+        Vector2 look = PIC.Player.Look.ReadValue<Vector2>();
 
         look *= Time.smoothDeltaTime;
         //look *= Time.deltaTime;
@@ -131,7 +188,7 @@ public class PlayerController : MonoBehaviour
         lookXY.x = Mathf.Clamp(lookXY.x + -look.y, -90, 90);
         lookXY.y += look.x;
 
-        Vector2 movDir = IA_Movement.ReadValue<Vector2>();
+        Vector2 movDir = PIC.Player.Move.ReadValue<Vector2>();
 
         movementDirection = transform.forward * movDir.y + transform.right * movDir.x;
 
@@ -176,11 +233,13 @@ public class PlayerController : MonoBehaviour
     }
     private void CameraUpdate()
     {
+        if (!IsOwner) return;
         camArm.transform.rotation = Quaternion.Euler(new Vector3(lookXY.x, lookXY.y, 0));
         transform.rotation = Quaternion.Euler(new Vector3(0, lookXY.y, 0));
     }
     private void MovementUpdate()
     {
+        if (!IsOwner) return;
         cc.Move(movementDirection * Time.deltaTime * adjustedSpeed);
         cc.Move(velocity * Time.deltaTime);
         if (isGrounded) velocity = Vector3.down * PlayerGravity;
@@ -196,9 +255,10 @@ public class PlayerController : MonoBehaviour
         }
     }
     public bool crouchToggle;
+
     private void CheckInputs()
     {
-        
+        if (!IsOwner) return;
         if (PIC.Player.Crouch.WasPressedThisFrame())
         {
             if(crouchToggle && Crouched)
@@ -220,6 +280,7 @@ public class PlayerController : MonoBehaviour
         
 
         //Debug
+        /*
         if (Keyboard.current.rKey.wasPressedThisFrame)
         {
             SceneManager.LoadScene("AnyTest");
@@ -228,15 +289,17 @@ public class PlayerController : MonoBehaviour
         if (Keyboard.current.pKey.wasPressedThisFrame)
         {
             print($"Current Ambience set to: {SoundDetection.instance.AmbienceLevel}");
-        }
+        }*/
     }
 
     public void OnInteract()
     {
+        if (!IsOwner) return;
         TryInteract();
     }
     private void TryInteract()
     {
+        if (!IsOwner) return;
         //If Interaction system hit an object
         if (InteractionSystem.s_lastHit.collider != null)
         {
@@ -265,10 +328,12 @@ public class PlayerController : MonoBehaviour
 
     private void OnJump()
     {
+        if (!IsOwner) return;
         Jump();
     }
     private void Jump()
     {
+        if (!IsOwner) return;
         if (currentJumps == 0) return;
         float strength = currentJumps != AllowedJumps ? JumpStrength * ExtraJumpStrength : JumpStrength;
         currentJumps--;
@@ -283,6 +348,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void StartPostJump()
     {
+        if (!IsOwner) return;
         isGrounded = false;
         isCheckingForGround = false;
         StopCoroutine(CheckForApex());
@@ -295,6 +361,7 @@ public class PlayerController : MonoBehaviour
     /// <returns></returns>
     private IEnumerator CheckForApex()
     {
+        if (!IsOwner) yield break;
         while (true)
         {
             if (velocity.y < 0)
@@ -309,7 +376,8 @@ public class PlayerController : MonoBehaviour
 
     public void OnTraverse()
     {
-        if(window != null)
+        if (!IsOwner) return;
+        if (window != null)
         {
             window.Traverse();
         }
@@ -317,6 +385,7 @@ public class PlayerController : MonoBehaviour
 
     private IEnumerator WaitForUncrouch()
     {
+        if (!IsOwner) yield break;
         while (true)
         {
             Vector3 footPos = cc.bounds.center - Vector3.up * cc.bounds.extents.y;
@@ -339,6 +408,7 @@ public class PlayerController : MonoBehaviour
 
     private void Crouch(bool value)
     {
+        if (!IsOwner) return;
         if (!value)
         {
             StopCoroutine(WaitForUncrouch());
@@ -353,18 +423,21 @@ public class PlayerController : MonoBehaviour
 
     public void SetCursor(bool value)
     {
+        if (!IsOwner) return;
         Cursor.lockState = value ? CursorLockMode.Confined : CursorLockMode.Locked;
         Cursor.visible = value;
         SetPlayerControl(!value);
     }
     public void SetPlayerControl(bool value)
     {
+        if (!IsOwner) return;
         controlling = value;
         if (value) PIC.Enable();
         else PIC.Disable();
     }
     public void TPPlayer(Vector3 pos)
     {
+        if (!IsOwner) return;
         cc.enabled = false;
         transform.position = pos;
         cc.enabled = true;

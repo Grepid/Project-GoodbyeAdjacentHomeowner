@@ -71,7 +71,6 @@ public class LobbyManager : MonoBehaviour {
 
     public async void Authenticate(string playerName) {
         this.playerName = playerName;
-        if (playerName == string.Empty) playerName = "Default Player Name";
         InitializationOptions initializationOptions = new InitializationOptions();
         initializationOptions.SetProfile(playerName);
 
