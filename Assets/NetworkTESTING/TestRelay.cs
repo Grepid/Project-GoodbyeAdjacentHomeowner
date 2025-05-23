@@ -35,6 +35,12 @@ public class TestRelay : MonoBehaviour
             NetworkManager.Singleton.StartHost();
 
             print($"Relay Join Code: {joinCode}");
+
+            //copies to clipboard
+            TextEditor te = new TextEditor();
+            te.text = joinCode;
+            te.SelectAll();
+            te.Copy();
         }
         catch(RelayServiceException e)
         {
